@@ -1,0 +1,33 @@
+<% content_for(:title, "メモ一覧") %>
+<div class="main posts-index">
+  <div class="container">
+    <h1 class="form-heading">メモ一覧</h1>
+    
+    <div class="posts-index-item">
+      <%= link_to("新しいメモを作成", new_memo_path, {class: "btn btn-primary"}) %>
+    </div>
+    
+    <% @memos.each do |memo| %>
+      <div class="posts-index-item">
+        <div class="post-left">
+          <img src="<%= "/user_images/#{memo.schedule.user.image_name}" %>">
+        </div>
+        <div class="post-right">
+          <div class="post-user-name">
+            <%= link_to(memo.schedule.user.name, "/users/#{memo.schedule.user.id}") %>
+          </div>
+          <div class="post-content">
+            <%= link_to(memo.memo, memo_path(memo)) %>
+          </div>
+          <div class="post-schedule">
+            スケジュール: <%= link_to(memo.schedule.content, "/schedules/#{memo.schedule.id}") %>
+            (<%= memo.schedule.date %>)
+          </div>
+          <div class="post-time">
+            <%= memo.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

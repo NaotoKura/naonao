@@ -1,0 +1,100 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'tasks', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+
+<div class="task-detail-container">
+  <div class="task-detail">
+    <div class="task-detail-header">
+      <h1 class="task-title"><%= @task.title %></h1>
+      <div class="task-meta">
+        <span class="status-badge status-<%= @task.status %>">
+          <%= case @task.status
+              when "not_started" then "未対応"
+              when "in_progress" then "処理中"
+              when "processed" then "処理済み"
+              when "completed" then "完了"
+              end %>
+        </span>
+        <span class="priority-badge priority-<%= @task.priority %>">
+          優先度: <%= case @task.priority
+                     when "low" then "低"
+                     when "medium" then "中"
+                     when "high" then "高"
+                     end %>
+        </span>
+      </div>
+    </div>
+
+    <% if @task.description.present? %>
+      <div class="detail-group">
+        <span class="detail-label">説明</span>
+        <div class="detail-value">
+          <%= simple_format(@task.description) %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="detail-group">
+      <span class="detail-label">担当者</span>
+      <div class="detail-value">
+        <% if @task.user %>
+          <%= link_to @task.user.name, "/users/#{@task.user.id}" %>
+        <% else %>
+          未設定
+        <% end %>
+      </div>
+    </div>
+
+    <div class="detail-group">
+      <span class="detail-label">作成者</span>
+      <div class="detail-value">
+        <% if @task.creator %>
+          <%= link_to @task.creator.name, "/users/#{@task.creator.id}" %>
+        <% else %>
+          未設定
+        <% end %>
+      </div>
+    </div>
+
+    <div class="detail-group">
+      <span class="detail-label">スケジュール</span>
+      <div class="date-range">
+        <div class="date-item">
+          <strong>開始日:</strong> <%= @task.start_date&.strftime("%Y年%m月%d日") || "未設定" %>
+        </div>
+        <div class="date-item">
+          <strong>期限:</strong> <%= @task.due_date&.strftime("%Y年%m月%d日") || "未設定" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-group">
+      <span class="detail-label">作成日時</span>
+      <div class="detail-value">
+        <%= @task.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+      </div>
+    </div>
+
+    <% if @task.updated_at != @task.created_at %>
+      <div class="detail-group">
+        <span class="detail-label">最終更新</span>
+        <div class="detail-value">
+          <%= @task.updated_at.strftime("%Y年%m月%d日 %H:%M") %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="task-detail-actions">
+      <%= link_to "一覧に戻る", tasks_path, class: "btn-secondary" %>
+      <% if @task.creator_id == @current_user.id || @task.user_id == @current_user.id %>
+        <%= link_to "編集", edit_task_path(@task), class: "btn-primary" %>
+        <%= link_to "削除", task_path(@task), 
+            data: { 
+              "turbo-method": :delete, 
+              "turbo-confirm": "本当に削除しますか？" 
+            }, 
+            class: "btn-danger" %>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="main posts-new">
+  <div class="container">
+    <h1 class="form-heading">編集する</h1>
+    <%= form_tag("/posts/#{@post.id}/update") do %>
+      <div class="form editform">
+        <div class="form-body">
+          <% @post.errors.full_messages.each do |message| %>
+            <div class="form-error">
+              <%= message %>
+            </div>
+          <% end %>
+          <label class="br2-label">(1) 仕事で感じたこと</label>
+          <textarea name="work_content"><%= @post.work_content %></textarea>
+          <label class="br2-label">(2) (1)の深掘り（解析・分析）</label>
+          <textarea name="content"><%= @post.content %></textarea>
+          <label class="br2-label">(3) 自己学習について</label>
+          <textarea name="study_content"><%= @post.study_content %></textarea>
+          <label class="br2-label">(4) 特記事項</label>
+          <textarea name="notices_content" ><%= @post.notices_content %></textarea>
+          <input type="submit" value="保存">
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%= javascript_include_tag "urlchange.js" %>

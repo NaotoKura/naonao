@@ -1,0 +1,34 @@
+ja:
+  activerecord:
+    models:
+      article: 投稿
+      user: ユーザー
+      category: カテゴリー
+      post: 役職
+    attributes:
+      article:
+        id: ID
+        title: タイトル
+        description: 本文
+        created_at: 投稿日
+        updated_at: 更新日
+      user:
+        id: ID
+        name: ユーザー名
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード（確認用）
+        created_at: 作成日
+        updated_at: 更新日
+        age: 年齢
+        code: コード
+      category:
+        id: ID
+        name: カテゴリー名
+      post:
+        content: 各投稿内容
+      card:
+        priorities:
+          low: 低
+          medium: 中
+          high: 高

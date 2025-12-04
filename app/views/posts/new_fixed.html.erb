@@ -1,0 +1,135 @@
+<div class="main posts-new">
+  <div class="container">
+    <h1 class="form-heading">投稿する</h1>
+    <%= form_tag("/posts/create") do %>
+      <div class="posts-form">
+        <div>
+          <% @post.errors.full_messages.each do |message| %>
+            <div class="form-error">
+              <%= message %>
+            </div>
+          <% end %>
+          <div class="mtg-agenda">
+            <div class="flex pb-4 justify-content-between">
+              <div class="font-16">ミーティング議題</div>
+              <div class="flex">
+                <button type="button" class="add-btn btn btn-flat text-white">
+                  <span>テキスト追加</span>
+                </button>
+                <div class="align-self-center ms-2 text-muted">自動保存</div>
+                <div class="toggle checked">
+                  <input type="checkbox" name="check" />
+                </div>
+              </div>
+            </div>
+            <ul id="sort-area">
+              <li class="mt-5 sort-item sort-num1">
+                <div class="flex align-items-baseline justify-content-between">
+                  <div class="flex width-40">
+                    <input type="text" class="br2-label input-item" placeholder="項目タイトルを入力してください">
+                  </div>
+                  <div class="flex">
+                    <div class="trash d-none" data-name="sort-num1"></div>
+                    <div class="indicator drag-handle d-none"></div>
+                  </div>
+                </div>
+                <textarea class="" name="" placeholder="内容を入力してください"></textarea>
+              </li>
+            </ul>
+            <div class="footer-area">
+              <input class="post-btn" type="submit" value="投稿">
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%= javascript_include_tag "urlchange.js" %>
+<%= javascript_include_tag "posts.js" %>
+<script>
+$(function() {
+  let itemNum = 1;
+  // 並び替え処理
+  let el = document.getElementById('sort-area');
+  let sortable = Sortable.create(el, {
+    animation: 150,
+    handle: '.drag-handle', // ドラッグ&ドロップのハンドルとなる要素を指定
+    onEnd: function(evt) {
+      // 並び替え後の処理をここに記述する
+      console.log('Items reordered:', evt.oldIndex, 'to', evt.newIndex);
+    }
+  });
+  // テキスト追加処理
+  $('.add-btn').on('click', function() {
+    // 8項目以上あればアラートを出す
+    count = $(".sort-item").length;
+    if (count >= 8) {
+      alert("8項目以上増やせません");
+      return;
+    }
+
+    count += 1;
+    itemNum += 1
+    let newSortItem = $('<li>').addClass(`mt-5 sort-item sort-num${itemNum}`);
+    let itemHead = $('<div>').addClass('flex align-items-baseline justify-content-between');
+    let itemNameArea = $('<div>').addClass('flex width-40');
+    let inputField = $('<input>').attr('type', 'text').addClass('br2-label input-item');
+    let buttonArea = $('<div>').addClass('flex');
+    let trash = $('<div>').addClass('trash');
+    let indicator = $('<div>').addClass('indicator drag-handle');
+    let textarea = $('<textarea>').addClass('');
+
+    itemNameArea.append(inputField);
+    buttonArea.append(trash, indicator);
+    itemHead.append(itemNameArea, buttonArea);
+    newSortItem.append(itemHead, textarea);
+
+    $('#sort-area').append(newSortItem);
+    trashItem = $(`.sort-num${itemNum}`).find('.trash');
+    trashItem.attr("data-name",`sort-num${itemNum}`);
+    inputField = $(`.sort-num${itemNum}`).find('input');
+    textarea = $(`.sort-num${itemNum}`).find('textarea');
+    textarea.attr('placeholder', '内容を入力してください');
+    inputField.attr('placeholder', '項目タイトルを入力してください');
+    if (count > 1) {
+      $(".trash").removeClass("d-none");
+      $(".indicator").removeClass("d-none");
+    }
+  });
+  // 削除処理
+  $(document).click(function(event) {
+    count = $(".trash").length;
+    if (event.target.className == "trash") {
+      if (count == 1) {
+        alert("これ以上は削除できません");
+        return;
+      }
+      deleteName = $(event.target).data('name');
+      textarea = $(`.${deleteName}`).find('textarea');
+      input = $(`.${deleteName}`).find('input');
+      if (textarea.val() == "" && input.val() == "") {
+        $(`.${deleteName}`).remove();
+      } else {
+        if(confirm("入力されています。削除してよろしいでしょうか?")){
+          $(`.${deleteName}`).remove();
+          
+        }
+      }
+      if (count == 2) {
+      $(".trash").addClass("d-none");
+      $(".indicator").addClass("d-none");
+    }
+    }
+  });
+  // トグルボタン
+  $(".toggle").on("click", function() {
+    $(".toggle").toggleClass("checked");
+    if(!$('input[name="check"]').prop("checked")) {
+      $(".toggle input").prop("checked", true);
+    } else {
+      $(".toggle input").prop("checked", false);
+    }
+  });
+})
+</script>

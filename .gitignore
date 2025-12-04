@@ -1,0 +1,110 @@
+# See https://help.github.com/articles/ignoring-files for more about ignoring files.
+
+# --------------------------
+# OS / Editor
+# --------------------------
+.idea/
+.vscode/
+.history/
+*.swp
+*.swo
+
+# --------------------------
+# Bundler / Ruby
+# --------------------------
+/.bundle
+/vendor/bundle
+*.rbc
+*.gem
+.ruby-gemset
+.rvmrc
+.rbenv-version
+
+# --------------------------
+# SQLite (for local dev)
+/db/*.sqlite3
+/db/*.sqlite3-*
+
+# --------------------------
+# Logs / Temp
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# PID files
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# --------------------------
+# Storage (ActiveStorage)
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+
+# --------------------------
+# Public Assets (Rails)
+/public/assets
+/public/packs
+/public/packs-test
+
+# --------------------------
+# Credentials
+/config/master.key
+/config/credentials.yml.enc
+
+# --------------------------
+# Node / Yarn / npm
+/node_modules
+yarn-debug.log*
+yarn-error.log*
+.yarn-integrity
+npm-debug.log*
+npm-error.log*
+package-lock.json
+
+# --------------------------
+# Cache / Debug
+.byebug_history
+spec/tmp/
+cache/
+
+# --------------------------
+# Environment
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --------------------------
+# Documentation
+/doc/
+/.yardoc
+
+# --------------------------
+# Test Coverage
+/coverage
+
+# --------------------------
+# IDE / Text Editor
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+
+# --------------------------
+# macOS
+*.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# --------------------------
+# Spring (Rails preloader)
+/spring/*.pid

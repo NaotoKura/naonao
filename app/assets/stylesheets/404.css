@@ -1,0 +1,35 @@
+/* reset ================================ */
+* {
+  box-sizing: border-box;
+}
+
+.error-message {
+  display: block;
+  text-align: center;
+  padding: 30px;
+  text-decoration: none;
+  color: #000000;
+  font-size: 14px;
+}
+.error-massage-url {
+  text-align: center;
+  text-decoration: none;
+  color: #000000;
+  font-size: 14px;
+}
+
+.error-massage-url a{
+  color: #3ecdc6;
+}
+.error {
+  font-size: 70px;
+}
+.box2 {
+    padding: 8px 10px;
+    margin: 70px;
+    font-weight: bold;
+    color: #3ecdc6;/*文字色*/
+    background: #FFF;
+    border: solid 3px #3ecdc6;/*線*/
+    border-radius: 10px;/*角の丸み*/
+}

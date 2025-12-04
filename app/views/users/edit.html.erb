@@ -1,0 +1,143 @@
+<div class="main users-edit">
+  <div class="container">
+    <div class="form-heading">アカウント編集</div>
+    <% @user.errors.full_messages.each do |message| %>
+      <div class="form-error">
+        <%= message %>
+      </div>
+    <% end %>
+
+    <fieldset class="shadow-lg p-3 mb-5 bg-body rounded">
+    <form action="/users/<%= @user.id %>/update" id="pageForm" method="post" enctype="multipart/form-data">
+      <div class="container">
+
+        <div class="d-flex">
+          <div style="margin-right:20%; margin-left:10%; width:30%;">
+            <div>
+              <label id="name" class="fw-bolder col-form-label-sm me-3">名前</label><span class="badge bg-danger">必須</span>
+              <div class="col-sm-10">
+                <input type="name" name="name" value="<%= @user.name %>" class="form-control form-control-sm mb-3" placeholder="名前">
+              </div>
+            </div>
+
+
+            <div>
+              <label class="fw-bolder col-form-label-sm me-3">コード</label><span class="badge bg-danger">必須</span>
+              <div class="col-sm-10">
+                <input type="code" name="code" value="<%= @user.code %>" class="form-control form-control-sm mb-3" placeholder="コード">
+              </div>
+            </div>
+
+
+
+            <div>
+              <label class="fw-bolder col-form-label-sm me-3">メール</label><span class="badge bg-danger">必須</span>
+              <div class="col-sm-10">
+                <input type="email" name="email" value="<%= @user.email %>" class="form-control form-control-sm mb-3" placeholder="メール">
+              </div>
+            </div>
+
+
+            <div>
+              <label class="col-sm-4 fw-bolder col-form-label-sm">パスワード</label>
+              <div class="col-sm-10">
+                <input type="password" name="password" value="<%= @user.password%>" class="form-control form-control-sm mb-3" placeholder="パスワード">
+              </div>
+            </div>
+            <div>
+              <label class="col-sm-5 fw-bolder col-form-label-sm">パスワード(確認用)</label>
+              <div class="col-sm-10">
+                <input type="password" name="password_confirmation" value="<%= params[:password] %>" class="form-control form-control-sm" placeholder="パスワード(確認用)">
+              </div>
+            </div>
+            <div>
+              <label class="col-sm-3 pt-3 fw-bolder col-form-label-sm">URL</label>
+              <div class="col-sm-10">
+                <input type="text" name="url" value="<%= @user.user_detail.url %>" class="form-control form-control-sm" placeholder="URL">
+              </div>
+            </div>
+            <div>
+              <label class="col-5 pt-3 fw-bolder col-form-label-sm">年齢</label>
+              <div class="col-sm-10">
+                <input type="text" name="age" id="age" value="<%= @user.age %>" class="form-control form-control-sm" placeholder="年齢">
+              </div>
+            </div>
+            <div>
+              <label class="fw-bolder pt-3 col-form-label-sm">画像</label>
+              <div class="col-sm-10">
+                <input type="file" name="image" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div>
+              <label class="form-label">プロフィール</label>
+              <textarea cols="40" rows="8" name="profile" class="form-control"><%= @user.user_detail.profile %></textarea>
+            </div>
+            <div><br>
+            <label class="col-form-label-sm fw-bolder me-3 pt-3">性別</label><span class="badge bg-danger">必須</span><br>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-gender" type="checkbox" id="inlineCheckbox1" name="gender" value="<%= Constants::GENDER_MAN %>"
+                  <%= "checked" if @user.gender.to_s == (Constants::GENDER_MAN) %>>
+                <label class="form-check-label" for="inlineCheckbox1">男性</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-gender" type="checkbox" id="inlineCheckbox2" name="gender" value="<%= Constants::GENDER_WOMAN %>"
+                  <%= "checked" if @user.gender.to_s == (Constants::GENDER_WOMAN) %>>
+                <label class="form-check-label" for="inlineCheckbox2">女性</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-gender" type="checkbox" id="inlineCheckbox3" name="gender" value="<%= Constants::GENDER_UNSELECT %>"
+                  <%= "checked" if @user.gender.to_s == (Constants::GENDER_UNSELECT) %>>
+                <label class="form-check-label" for="inlineCheckbox3">未設定</label>
+              </div>
+            </div>
+            <div class="p-3 d-flex">
+              <label class="col-sm-2 pt-3 col-form-label col-form-label-sm fw-bolder">住所</label>
+              <select class="col-4 form-select form-select-sm" aria-label=".form-select-sm example"name="prefecture_id">
+                <option value="" hidden>住所選択</option>
+                <option value="0">未設定</option>
+                <% @prefectures.each do |prefecture| %>
+                  <option value="<%= prefecture.id %>"<%= "selected" if  prefecture.id == @user. prefecture_id %>><%= prefecture.name %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="p-3 d-flex">
+            <label class="col-sm-3 col-form-label-sm fw-bolder">生年月日</label>
+              <select class="col-4 form-select form-select-sm me-3" name="year">
+                <option value="" hidden>年</option>
+                <option value="0">未設定</option>
+                <% Constants::YEARS.each do |years| %>
+                  <option value="<%= years %>"<%= "selected" if years == @user.year %>><%= years %>年</option>
+                <% end %>
+              </select>
+              <select class="form-select col-4 form-select-sm" name="month">
+                <option value="" hidden>月</option>
+                <option value="0">未設定</option>
+                <% for month in 1..12 %>
+                  <option value="<%= month %>"<%= "selected" if month == @user.month %>><%= month %>月</option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="row justify-content-end p-3">
+        <div class="col-4 text-center">
+          <input type="submit" id="update" class="btn btn-primary" style="color: white;" value="更新">
+        </div>
+    </form>
+        <div class="col-4 text-center">
+          <form id="discard_btn" method="POST" action="/users/<%= @user.id%>/discard">
+            <button type="button" class="btn btn-danger" style="background-color: red;" >削除</button>
+          </form>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</div>
+<%= javascript_include_tag "users.js" %>
+<%= javascript_include_tag "urlchange.js" %>

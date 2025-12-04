@@ -1,0 +1,24 @@
+<%= form_with(model: @memo, local: true) do |form| %>
+  <% if @memo.errors.any? %>
+    <div class="form-error">
+      <% @memo.errors.full_messages.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="form-body">
+    <% if @schedule %>
+      <p>
+        <strong>関連スケジュール:</strong>
+        <%= @schedule.schedule %> (<%= @schedule.date %>)
+        <%= form.hidden_field :schedule_id, value: @schedule.id %>
+      </p>
+    <% end %>
+
+    <p>メモ内容</p>
+    <%= form.text_area(:memo, {class: "form-memo", placeholder: "メモを入力してください"}) %>
+    
+    <%= form.submit(value: @memo.persisted? ? "更新" : "作成", class: "btn btn-primary") %>
+  </div>
+<% end %>

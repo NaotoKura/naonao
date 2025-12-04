@@ -1,0 +1,11 @@
+<% content_for(:title, "新しいメモ") %>
+<div class="main posts-new">
+  <div class="container">
+    <h1 class="form-heading">新しいメモを作成</h1>
+    <%= render 'form' %>
+    
+    <div class="form-body">
+      <%= link_to("メモ一覧に戻る", memos_path, {class: "btn btn-default"}) %>
+    </div>
+  </div>
+</div>

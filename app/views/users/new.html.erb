@@ -1,0 +1,32 @@
+<div class="main users-new">
+  <div class="container">
+    <div class="form-heading">新規ユーザー登録</div>
+    <div class="form users-form">
+      <div class="form-body">
+        <% @user.errors.full_messages.each do |message| %>
+          <div class="form-error">
+            <%= message %>
+          </div>
+        <% end %>
+
+        <%= form_tag("/users/create") do %>
+          <label class="br2-label">・パスワードは8文字以上20文字以内
+          ・パスワードには大文字と小文字と数字を1回以上含んでください。
+          ・「@」「.」「_」「-」のうち1文字以上含めてください。
+          ・また、上記以外の記号は使えません。
+          </label><br>
+            <label id="name" class="fw-bolder col-form-label-sm me-3">名前</label><span class="badge bg-danger">必須</span>
+              <input name="name" value="<%= @user.name %>" placeholder="ユーザー名">
+            <label id="name" class="fw-bolder col-form-label-sm me-3">メールアドレス</label><span class="badge bg-danger">必須</span>
+              <input name="email" value="<%= @user.email %>" placeholder="メールアドレス">
+            <label id="name" class="fw-bolder col-form-label-sm me-3">パスワード</label><span class="badge bg-danger">必須</span>
+              <input type="password" name="password" value="<%= @user.password %>" placeholder="パスワード">
+            <label id="name" class="fw-bolder col-form-label-sm me-3">パスワード（確認用）</label><span class="badge bg-danger">必須</span>
+              <input type="password" name="password_confirmation" value="" placeholder="パスワード(確認用)">
+            <input type="submit" value="新規登録">
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<%= javascript_include_tag "urlchange.js" %>

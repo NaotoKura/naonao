@@ -1,0 +1,36 @@
+<% content_for(:title, "メモ詳細") %>
+<div class="main posts-show">
+  <div class="container">
+    <div class="posts-show-item">
+      <div class="post-user-name">
+        <img src="<%= "/user_images/#{@memo.schedule.user.image_name}" %>">
+        <%= link_to(@memo.schedule.user.name, "/users/#{@memo.schedule.user.id}") %>
+      </div>
+      
+      <h2>メモ内容</h2>
+      <p class="post-content"><%= simple_format(@memo.memo) %></p>
+      
+      <div class="post-schedule">
+        <h3>関連スケジュール</h3>
+        <p>
+          <%= link_to(@memo.schedule.content, "/schedules/#{@memo.schedule.id}") %>
+          (<%= @memo.schedule.date %>)
+        </p>
+        <p><%= link_to("スケジュール詳細を見る", "/schedules/#{@memo.schedule.id}", {class: "btn btn-primary"}) %></p>
+      </div>
+      
+      <div class="post-time">
+        作成日時: <%= @memo.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+        <% if @memo.updated_at != @memo.created_at %>
+          <br>更新日時: <%= @memo.updated_at.strftime("%Y年%m月%d日 %H:%M") %>
+        <% end %>
+      </div>
+      
+      <div class="post-menus">
+        <%= link_to("編集", edit_memo_path(@memo), {class: "btn edit-btn"}) %>
+        <%= link_to("削除", memo_path(@memo), {method: "delete", class: "btn destroy-btn", confirm: "本当に削除しますか？"}) %>
+        <%= link_to("メモ一覧に戻る", memos_path, {class: "btn btn-default"}) %>
+      </div>
+    </div>
+  </div>
+</div>

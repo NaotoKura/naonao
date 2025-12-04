@@ -1,0 +1,133 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'schedules', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+<div class="modern-schedule-page">
+  <div class="schedule-container">
+    <header class="schedule-header">
+      <div class="date-navigation">
+        <%= link_to schedules_index_path(change: -1, date: @date), class: 'nav-arrow nav-arrow--prev' do %>
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+        <% end %>
+        <h1 class="current-date">
+          <span class="date-text"><%= @date %></span>
+          <span class="plan-label">の計画</span>
+        </h1>
+        <%= link_to schedules_index_path(change: +1, date: @date), class: 'nav-arrow nav-arrow--next' do %>
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+          </svg>
+        <% end %>
+      </div>
+      <a href="/schedules/new" class="btn-primary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        新規登録
+      </a>
+    </header>
+
+    <main class="schedule-content">
+      <% if @schedules.blank? %>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+            </svg>
+          </div>
+          <h3 class="empty-title">スケジュールがありません</h3>
+          <p class="empty-description">新しいスケジュールを追加して、一日を計画しましょう</p>
+        </div>
+      <% else %>
+        <div class="schedule-list">
+          <% @schedules.sort_by(&:start_time).each do |schedule| %>
+            <div class="schedule-item <%= 'schedule-item--' + case schedule.category
+              when 1 then 'other'
+              when 2 then 'task'
+              when 3 then 'meeting'
+              when 4 then 'break'
+              when 5 then 'study'
+              else 'default'
+            end %>">
+              <div class="schedule-time">
+                <%= schedule.start_time.strftime("%H:%M") %>
+                <span class="time-separator">-</span>
+                <%= schedule.end_time.strftime("%H:%M") %>
+              </div>
+              <div class="schedule-details">
+                <div class="schedule-main">
+                  <span class="schedule-category">
+                    <%= case schedule.category
+                      when 1 then 'その他'
+                      when 2 then 'タスク'
+                      when 3 then 'MTG'
+                      when 4 then '休憩'
+                      when 5 then '自己学習'
+                    end %>
+                  </span>
+                  <h3 class="schedule-content"><%= schedule.content %></h3>
+                </div>
+                <% if schedule.deadline.present? %>
+                  <div class="schedule-deadline">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4-7h-3V2h-2v2H8V2H6v2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H3V9h14v11z"/>
+                    </svg>
+                    <%= schedule.deadline.strftime("%m/%d") %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="schedule-actions">
+                <a class="schedule-action schedule-action--memo" href="<%= "/memos/#{schedule.id}/edit"%>" title="メモ">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                  </svg>
+                </a>
+                <button class="schedule-action schedule-action--delete deleteButton" data-id="<%= schedule.id %>" title="削除">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </main>
+
+    <footer class="schedule-footer">
+      <a href="/schedules/date/<%= @date %>/edit" class="btn-secondary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+        </svg>
+        一括編集
+      </a>
+    </footer>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll(".deleteButton").forEach(function(button) {
+    button.addEventListener("click", function(e) {
+      var scheduleId = e.target.dataset.id;  // data-schedule-id の値を取得
+      if (confirm("本当に削除してもよろしいですか？")) {
+        window.location.href = "/schedules/" + scheduleId + "/destroy";
+      } else {
+        alert("削除はキャンセルされました。");
+      }
+    });
+  });
+
+  const firstMotion = document.getElementById('first-motion');
+  const waitMotion = document.getElementById('wait-motion');
+  waitMotion.pause();
+  firstMotion.addEventListener('timeupdate', () => {
+    if (firstMotion.currentTime >= 5) {
+      waitMotion.classList.remove("d-none");
+      firstMotion.classList.add("d-none");
+      waitMotion.play();
+      firstMotion.pause();
+    }
+  });
+
+</script>

@@ -1,0 +1,17 @@
+<!-- 各カードにIDを持たせる -->
+<div class="card mb-2" data-card-id="<%= card.id %>" id="<%= dom_id(card) %>">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start">
+      <h6 class="card-title"><%= card.title %></h6>
+      <%= link_to card_path(card), data: { turbo_method: :delete, turbo_confirm: "本当にこのカードを削除しますか？" }, class: "btn btn-sm btn-outline-danger py-0 px-1" do %>
+        <i class="fa fa-trash-o" aria-hidden="true"></i>
+      <% end %>
+    </div>
+    <p class="card-text mb-1">
+      <strong>優先度:</strong> <%= card.priority.humanize %>
+    </p>
+    <p class="card-text">
+      <strong>期日:</strong> <%= card.due_date %>
+    </p>
+  </div>
+</div>

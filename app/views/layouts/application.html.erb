@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Naonao</title>
+    <%= csrf_meta_tags %>
+
+    <%= yield :head %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbo-track': 'reload' %>
+    <%= javascript_importmap_tags %>
+    <link rel="stylesheet" media="screen" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" media="screen" href="/stylesheets/bootstrap-grid.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <nav class="navbar" style="background-color: #3ecdc6; height: 80px; z-index: 1;">
+        <div class="header-logo">
+          <% if @current_user %>
+            <%= link_to("Naonao", "/posts/index", class: "navbar-brand") %>
+          <% else %>
+            <%= link_to("Naonao", "/", class: "navbar-brand") %>
+          <% end %>
+        </div>
+        <ul class="header-menus">
+          <% if @current_user %>
+            <li>
+              <%= link_to(@current_user.name, "/users/#{@current_user.id}", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("スケジュール", "/schedules/index", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("タスク一覧", tasks_path, class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("カンバンボード", board_path, class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("投稿一覧", "/posts/index", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("新規投稿", "/posts/new", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("ユーザー一覧", "/users/index", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("ログアウト", "/logout", method: "post", class: "navbar-brand") %>
+            </li>
+          <% else %>
+            <li>
+              <%= link_to("TweetAppとは", "/about", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("新規登録", "/signup", class: "navbar-brand") %>
+            </li>
+            <li>
+              <%= link_to("ログイン", "/login", class: "navbar-brand") %>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
+    </header>
+
+    <% if flash[:notice] %>
+      <div class="flash">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>

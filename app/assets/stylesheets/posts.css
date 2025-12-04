@@ -1,0 +1,385 @@
+.mtg-agenda {
+  padding: 20px 30px;
+}
+.flex {
+  display: flex;
+}
+.font-16 {
+  font-size: 16px;
+}
+.font-13 {
+  font-size: 13px;
+}
+.font-8899a6 {
+  color: #8899a6;
+}
+.width-40 {
+  width: 40%;
+}
+/* posts/index ================================ */
+.posts-index-item {
+  padding: 20px 30px;
+  background-color: white;
+  overflow: hidden;
+  box-shadow: 0 2px 6px #c1ced7;
+}
+
+.post-left img {
+  width: 50px;
+  height: 50px;
+  border-radius: 40%;
+  box-shadow: 0 2px 6px #c1ced7;
+  object-fit: cover;
+}
+
+.post-user-name a {
+  font-weight: 600;
+}
+
+.post-user-name a:hover {
+  color: #3ecdc6;
+}
+
+.post-left {
+  float: left;
+  width: 10%;
+}
+
+.post-right {
+  float: left;
+  width: 90%;
+  padding-left: 25px;
+  text-align: left;
+}
+
+.post-index-time {
+  font-size: 13px;
+}
+
+.post-index-content-title {
+  font-size: 15px;
+}
+.post-index-content {
+  font-size: 13px;
+}
+
+/* posts/show ================================ */
+.posts-show form {
+  display: inline;
+}
+
+.posts-show-item {
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 6px #c1ced7;
+  overflow: hidden;
+}
+
+.posts-show-item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 40%;
+  box-shadow: 0 2px 6px #c1ced7;
+  vertical-align: middle;
+  object-fit: cover;
+}
+
+.posts-show-item .post-user-name a {
+  vertical-align: middle;
+  font-size: 24px;
+  margin-left: 15px;
+}
+
+.posts-show-item p {
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+.post-time {
+  color: #8899a6;
+  margin-bottom: 10px;
+}
+
+.unliked-btn {
+  color: #8899a6;
+}
+
+.liked-btn {
+  color: #ff2581;
+}
+
+.posts-show-item .fa {
+  font-size: 16px;
+  margin-right: 3px;
+}
+
+.post-menus {
+  float: right;
+}
+
+.post-menus a, .post-menus input {
+  color: #8899a6;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+/* posts/new ================================ */
+.posts-new textarea {
+  font-size: 13px;
+  padding: 10px;
+  min-height: 300px;
+  border: 1px solid rgb(216, 218, 223);
+  resize: none;
+  width: 100% !important;
+}
+
+.posts-new textarea::-webkit-input-placeholder {
+  font-size: 24px;
+  opacity: 0.5;
+}
+
+label.br2-label {
+  white-space: pre-line;
+  font-size: 13px;
+  color: #8899a6;
+  opacity: 0.8;
+}
+
+.form-new {
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 2px 6px #c1ced7;
+}
+
+.font-12 {
+  font-size: 12px !important;
+}
+
+/* ================================ posts/new (改修) ================================ */
+/* テキスト追加ボタン */
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+html {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+.btn,
+.add-btn.btn,
+button.btn {
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: #212529;
+  border-radius: 0.5rem;
+}
+
+.add-btn.btn-flat {
+  overflow: hidden;
+  color: #fff;
+  border-radius: 0;
+  background: #000;
+}
+
+.add-btn.btn-flat span {
+  position: relative;
+}
+
+.add-btn.btn-flat:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 150%;
+  height: 500%;
+
+  content: "";
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  -webkit-transform: translateX(-98%) translateY(-25%) rotate(45deg);
+  transform: translateX(-98%) translateY(-25%) rotate(45deg);
+
+  background: #00b7ee;
+}
+
+.add-btn.btn-flat:hover:before {
+  -webkit-transform: translateX(-9%) translateY(-25%) rotate(45deg);
+  transform: translateX(-9%) translateY(-25%) rotate(45deg);
+}
+/* トグルボタン */
+.toggle {
+  position: relative;
+  width: 50px;
+  height: 25px;
+  border-radius: 50px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.toggle input[type=checkbox] {
+  display: none;
+}
+.toggle:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #f45e55;
+  -webkit-transition: 0.2s ease-out;
+  transition: 0.2s ease-out;
+}
+.toggle:after {
+  content: "OFF";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  display: block;
+  border-radius: 50px;
+  background: #fff;
+  box-shadow: 0 9px 28px -6px rgba(0, 0, 0, 0.3);
+  -webkit-transition: 0.2s ease-out;
+  transition: 0.2s ease-out;
+  text-align: center;
+  line-height: 20px;
+  font-size: 8px;
+  font-weight: bold;
+  color: #df4c43;
+  letter-spacing: .5px;
+  box-sizing: border-box;
+}
+.toggle.checked:before {
+  background: #24e89c;
+}
+.toggle.checked:after {
+  content: "ON";
+  left: 27px;
+  box-shadow: 0 9px 28px -6px rgba(0, 0, 0, 0.5);
+  color: #16d088;
+}
+.input-item {
+  margin-bottom: 10px;
+  border: none !important;
+  outline: none !important;
+  border-bottom: 1px solid #bcc8d4 !important;
+  background-color: initial !important;
+  outline-width: initial !important;
+  width: 100%;
+}
+.posts-form {
+  max-width: 1010px;
+  margin: 0 auto;
+  background-color: white;
+  box-shadow: 0 2px 6px #c1ced7;
+  height: auto;
+}
+.post-btn {
+  background-color: #3ecdc6;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  width: 120px;
+  border-radius: 2px;
+  margin-top: 8px;
+  margin-bottom: 0;
+  float: right;
+  height: 40px;
+}
+.footer-area {
+  height: 40px;
+}
+/* ================================ posts/edit (改修) ================================ */
+
+
+/* ================================ ゴミ箱アイコン ================================ */
+.trash {
+  font-size: 14px;
+  position: relative;
+  width: 0.9em;
+  height: 1.2em;
+  border-left: 0.1em solid #8899a6;
+  border-right: 0.1em solid #8899a6;
+  border-bottom: 0.1em solid #8899a6;
+  border-radius: 0 0 0.1em 0.1em;
+  background: 
+    linear-gradient(to bottom, #8899a6 0%, #8899a6 100%) 0.15em 0.2em,
+    linear-gradient(to bottom, #8899a6 0%, #8899a6 100%) 0.47em 0.2em
+  ;
+  background-size: 0.1em 0.8em;
+  background-repeat: no-repeat;
+}
+/* 蓋 */
+.trash::before {
+  content: "";
+  position: absolute;
+  /* top: -0.1em; */
+  left: -0.2em;
+  width: 1.1em;
+  height: 0.09em;
+  background-color: #8899a6;
+}
+::placeholder {
+  color: #8899a6;
+}
+/* ================================ 並び替えアイコン ================================ */
+.trash::after {
+  content: "";
+  position: absolute;
+  top: -0.2em;
+  left: 0.13em;
+  width: 0.5em;
+  height: 0.2em;
+  border-top: 0.1em solid #8899a6;
+  border-left: 0.1em solid #8899a6;
+  border-right: 0.1em solid #8899a6;
+  border-radius: 0.1em 0.1em 0 0;
+}
+.indicator {
+  margin-right: 30px;
+  margin-left: 10px;
+  position: relative;
+  top: -4px;
+
+}
+.indicator::before {
+  content: "";
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  border: 8px solid transparent;;
+  border-bottom-color: #8899a6;
+  margin-top: -5px;
+}
+
+.indicator::after {
+  content: "";
+  height: 10px;
+  width: 10px;
+  position: absolute;
+  border: 8px solid transparent;;
+  border-top-color: #8899a6;
+  margin-top: 12px;
+}

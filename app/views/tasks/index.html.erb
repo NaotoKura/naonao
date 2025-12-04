@@ -1,0 +1,108 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'tasks', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+
+<div class="modern-task-page">
+  <div class="task-container">
+    <div class="task-header">
+      <h1>タスク一覧</h1>
+      <div class="task-actions">
+        <%= link_to gantt_tasks_path, class: "btn-secondary" do %>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"/>
+          </svg>
+          ガントチャート
+        <% end %>
+        <%= link_to new_task_path, class: "btn-primary" do %>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          新規タスク作成
+        <% end %>
+      </div>
+    </div>
+
+    <main class="task-content">
+      <% if @tasks.any? %>
+        <div class="task-table-container">
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th>タイトル</th>
+                <th>ステータス</th>
+                <th>優先度</th>
+                <th>担当者</th>
+                <th>開始日</th>
+                <th>期限</th>
+                <th>作成者</th>
+                <th>アクション</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @tasks.each do |task| %>
+                <tr>
+                  <td>
+                    <%= link_to task.title, task_path(task), style: "text-decoration: none; color: #1e293b; font-weight: 600;" %>
+                  </td>
+                  <td>
+                    <span class="status-badge status-<%= task.status %>">
+                      <%= case task.status
+                          when "not_started" then "未対応"
+                          when "in_progress" then "処理中"
+                          when "processed" then "処理済み"
+                          when "completed" then "完了"
+                          end %>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="priority-badge priority-<%= task.priority %>">
+                      <%= case task.priority
+                          when "low" then "低"
+                          when "medium" then "中"
+                          when "high" then "高"
+                          end %>
+                    </span>
+                  </td>
+                  <td><%= task.user&.name || "未設定" %></td>
+                  <td><%= task.start_date&.strftime("%Y-%m-%d") || "-" %></td>
+                  <td><%= task.due_date&.strftime("%Y-%m-%d") || "-" %></td>
+                  <td><%= task.creator&.name || "未設定" %></td>
+                  <td>
+                    <div class="action-buttons">
+                      <%= link_to "表示", task_path(task), class: "btn btn-primary" %>
+                      <% if task.creator_id == @current_user.id || task.user_id == @current_user.id %>
+                        <%= link_to "編集", edit_task_path(task), class: "btn btn-secondary" %>
+                        <%= link_to "削除", task_path(task), 
+                            data: { 
+                              "turbo-method": :delete, 
+                              "turbo-confirm": "本当に削除しますか？" 
+                            }, 
+                            class: "btn btn-danger" %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+            </svg>
+          </div>
+          <h3>タスクがありません</h3>
+          <p>新しいタスクを作成して、プロジェクトを管理しましょう</p>
+          <%= link_to new_task_path, class: "btn-primary" do %>
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            新規タスク作成
+          <% end %>
+        </div>
+      <% end %>
+    </main>
+  </div>
+</div>

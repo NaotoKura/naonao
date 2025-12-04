@@ -1,0 +1,80 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'tasks', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+
+<div class="task-form-container">
+  <div class="task-form">
+    <h1>タスク編集</h1>
+    
+    <% if @task.errors.any? %>
+      <div class="error-messages">
+        <strong><%= @task.errors.count %>個のエラーがあります:</strong>
+        <ul>
+          <% @task.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: @task, local: true do |form| %>
+      <div class="form-group">
+        <%= form.label :title, "タイトル *" %>
+        <%= form.text_field :title, placeholder: "タスクのタイトルを入力してください" %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :description, "説明" %>
+        <%= form.text_area :description, placeholder: "タスクの詳細説明を入力してください" %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :user_id, "担当者 *" %>
+        <%= form.select :user_id, 
+            options_from_collection_for_select(@users, :id, :name, @task.user_id), 
+            { prompt: "担当者を選択してください" },
+            { class: "form-control" } %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :priority, "優先度 *" %>
+        <%= form.select :priority, 
+            options_for_select([
+              ["低", "low"],
+              ["中", "medium"],
+              ["高", "high"]
+            ], @task.priority), 
+            { prompt: "優先度を選択してください" },
+            { class: "form-control" } %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :status, "ステータス *" %>
+        <%= form.select :status, 
+            options_for_select([
+              ["未対応", "not_started"],
+              ["処理中", "in_progress"],
+              ["処理済み", "processed"],
+              ["完了", "completed"]
+            ], @task.status), 
+            { prompt: "ステータスを選択してください" },
+            { class: "form-control" } %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :start_date, "開始日" %>
+        <%= form.date_field :start_date %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :due_date, "期限" %>
+        <%= form.date_field :due_date %>
+      </div>
+
+      <div class="form-actions">
+        <%= link_to "キャンセル", task_path(@task), class: "btn-secondary" %>
+        <%= form.submit "更新", class: "btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

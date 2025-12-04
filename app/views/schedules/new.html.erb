@@ -1,0 +1,246 @@
+
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'schedules', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+<div class="modern-schedule-page">
+  <div class="schedule-container">
+    <header class="create-page-header">
+      <div class="header-background">
+        <div class="header-pattern"></div>
+      </div>
+      <div class="header-content">
+        <div class="breadcrumb">
+          <a href="/schedules" class="breadcrumb-link">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            スケジュール一覧
+          </a>
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+          </svg>
+          <span class="breadcrumb-current">新規作成</span>
+        </div>
+        <div class="header-main">
+          <div class="page-icon">
+            <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+          </div>
+          <div class="header-text">
+            <h1 class="page-title">新しいスケジュール</h1>
+            <p class="page-description">1日のスケジュールを計画して、効率的な時間管理を始めましょう</p>
+          </div>
+        </div>
+        <div class="header-stats">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">24</div>
+              <div class="stat-label">時間</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4-7h-3V2h-2v2H8V2H6v2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H3V9h14v11z"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">5</div>
+              <div class="stat-label">カテゴリー</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <%= form_tag("/schedules/create", class: "schedule-form") do %>
+      <div class="form-container">
+        <% if @schedule.errors.any? %>
+          <div class="error-container">
+            <% @schedule.errors.full_messages.each do |message| %>
+              <div class="error-message">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <%= message %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <div id="scheduleContainer" class="schedule-form-content">
+          <div class="form-header">
+            <h2 class="section-title">スケジュール設定</h2>
+            <button id="addRowButton" type="button" class="btn-add">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              </svg>
+              行を追加
+            </button>
+          </div>
+
+            <!-- 最初のスケジュール行 -->
+            <% schedules = [
+              { type: 1, start: "09:30", end: "10:00", content: "案件探し・応募・連絡" },
+              { type: 2, start: "10:00", end: "11:00", content: "" },
+              { type: 2, start: "11:00", end: "12:00", content: "" },
+              { type: 4, start: "12:00", end: "13:00", content: "休憩" },
+              { type: 3, start: "13:00", end: "13:30", content: "昼会" },
+              { type: 2, start: "13:30", end: "14:30", content: "" },
+              { type: 2, start: "14:30", end: "15:30", content: "" },
+              { type: 2, start: "15:30", end: "16:30", content: "" },
+              { type: 2, start: "16:30", end: "17:30", content: "" },
+              { type: 2, start: "17:30", end: "19:00", content: "" },
+              { type: 2, start: "19:00", end: "00:00", content: "" }
+            ] %>
+
+          <div class="schedule-rows">
+            <% schedules.each do |s| %>
+              <div class="schedule-row time-schedule">
+                <div class="form-group">
+                  <label class="form-label">種別</label>
+                  <select class="form-input form-select" name="schedule[category][]">
+                    <option value="1" <%= 'selected' if s[:type] == 1 %>>その他</option>
+                    <option value="2" <%= 'selected' if s[:type] == 2 %>>タスク</option>
+                    <option value="3" <%= 'selected' if s[:type] == 3 %>>MTG</option>
+                    <option value="4" <%= 'selected' if s[:type] == 4 %>>休憩</option>
+                    <option value="5" <%= 'selected' if s[:type] == 5 %>>自己学習</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">開始時間</label>
+                  <select class="form-input form-select" name="schedule[start_time][]">
+                    <% @hours.each do |hour| %>
+                      <option value="<%= hour %>" <%= 'selected' if hour == s[:start] %>><%= hour %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">終了時間</label>
+                  <select class="form-input form-select" name="schedule[end_time][]">
+                    <% @hours.each do |hour| %>
+                      <option value="<%= hour %>" <%= 'selected' if hour == s[:end] %>><%= hour %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div class="form-group form-group--wide">
+                  <label class="form-label">内容</label>
+                  <input class="form-input" type="text" name="schedule[content][]" value="<%= s[:content] %>" placeholder="スケジュールの詳細を入力">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">期限</label>
+                  <input class="form-input" type="date" name="schedule[deadline][]">
+                  <input type="hidden" value="<%= @today %>" name="schedule[date][]">
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+        </div>
+        
+        <div class="form-footer">
+          <div class="form-actions">
+            <a href="/schedules" class="btn-secondary">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+              </svg>
+              キャンセル
+            </a>
+            <button type="submit" class="btn-primary">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              スケジュールを保存
+            </button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%= javascript_include_tag "schedules.js" %>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // 追加ボタンの要素を取得
+    const addRowButton = document.getElementById("addRowButton");
+    // 新しい要素を追加するためのコンテナ
+    const scheduleContainer = document.getElementById("scheduleContainer");
+
+    // 追加ボタンをクリックしたときのイベントリスナー
+    addRowButton.addEventListener("click", function() {
+      const scheduleElement = document.querySelectorAll('.time-schedule');
+      const count = scheduleElement.length + 1;
+
+      // 新しい行のHTML構造
+      const newRow = `
+        <div class="schedule-row time-schedule" data-code="item${count}">
+          <div class="form-group">
+            <label class="form-label">種別</label>
+            <select class="form-input form-select" name="schedule[category][]">
+              <option value="1">その他</option>
+              <option value="2">タスク</option>
+              <option value="3">MTG</option>
+              <option value="4">休憩</option>
+              <option value="5">自己学習</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">開始時間</label>
+            <select class="form-input form-select" name="schedule[start_time][]">
+              <% @hours.each do |hour| %>
+                <option value="<%= hour %>"><%= hour %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">終了時間</label>
+            <select class="form-input form-select" name="schedule[end_time][]">
+              <% @hours.each do |hour| %>
+                <option value="<%= hour %>"><%= hour %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="form-group form-group--wide">
+            <label class="form-label">内容</label>
+            <input class="form-input" type="text" name="schedule[content][]" placeholder="スケジュールの詳細を入力">
+          </div>
+          <div class="form-group">
+            <label class="form-label">期限</label>
+            <input class="form-input" type="date" name="schedule[deadline][]">
+            <input type="hidden" value="<%= @today %>" name="schedule[date][]">
+          </div>
+          <div class="form-group form-group--actions">
+            <button type="button" class="btn-remove remove-btn" data-num="${count}">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+      // 新しい行をコンテナに追加
+      scheduleContainer.insertAdjacentHTML('beforeend', newRow);
+
+      // 新しく追加されたボタンにクリックイベントを追加
+      const removeButton = scheduleContainer.querySelector(`[data-num="${count}"]`);
+      removeButton.addEventListener("click", function() {
+        scheduleItemDelete(count);
+      });
+    });
+
+    // 削除関数
+    function scheduleItemDelete(num) {
+      const element = document.querySelector(`[data-code="item${num}"]`);
+      if (element) {
+        element.remove();
+      }
+    }
+  });
+</script>
+

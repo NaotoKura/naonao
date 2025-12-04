@@ -1,0 +1,669 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'tasks', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+
+<div class="gantt-container">
+  <div class="gantt-header">
+    <h1>ガントチャート</h1>
+    <div class="gantt-controls">
+      <%= link_to tasks_path, class: "btn-secondary" do %>
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 7l-3 3 3 3"/>
+        </svg>
+        タスク一覧
+      <% end %>
+      <%= link_to new_task_path, class: "btn-primary" do %>
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        新規タスク作成
+      <% end %>
+    </div>
+  </div>
+
+  <% if @chart_data.any? %>
+    <div class="gantt-legend">
+      <div class="legend-item">
+        <div class="legend-color legend-high"></div>
+        <span>高優先度</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-medium"></div>
+        <span>中優先度</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-low"></div>
+        <span>低優先度</span>
+      </div>
+    </div>
+    
+    <div class="gantt-chart">
+      <div class="timeline-header">
+        <div class="task-name-header">タスク名</div>
+        <div class="timeline-dates-container">
+          <div class="timeline-dates" id="timeline-dates">
+            <!-- 日付ヘッダーがJavaScriptで生成される -->
+          </div>
+        </div>
+      </div>
+      <div class="gantt-content">
+        <div class="task-names-column">
+          <% @chart_data.each do |task| %>
+            <div class="task-name-row">
+              <div class="task-name">
+                <div class="task-info">
+                  <div class="task-title">
+                    <%= link_to task[:name], task_path(task[:id]), 
+                        style: "color: #1e293b; text-decoration: none; font-weight: 600;" %>
+                  </div>
+                  <div class="task-meta">
+                    <span class="priority-badge priority-<%= task[:custom_class] %>">
+                      <%= case task[:custom_class]
+                          when "low" then "低"
+                          when "medium" then "中"
+                          when "high" then "高"
+                          end %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="gantt-timeline">
+          <div class="timeline-body">
+            <% @chart_data.each do |task| %>
+              <div class="timeline-row">
+                <div class="timeline-track">
+                  <div class="task-bar priority-<%= task[:custom_class] %>" 
+                       data-start="<%= task[:start] %>" 
+                       data-end="<%= task[:end] %>" 
+                       data-progress="<%= task[:progress] %>"
+                       data-task-id="<%= task[:id] %>"
+                       title="<%= task[:name] %> (<%= task[:start] %> ~ <%= task[:end] %>, 進捗: <%= task[:progress] %>%)">
+                    <div class="task-progress" style="width: <%= task[:progress] %>%"></div>
+                    <span class="task-label"><%= task[:name] %></span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="empty-gantt">
+      <div class="empty-icon">
+        <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"/>
+        </svg>
+      </div>
+      <h3>表示するタスクがありません</h3>
+      <p>開始日と期限が設定されたタスクがありません。</p>
+      <%= link_to new_task_path, class: "btn-primary" do %>
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        新規タスク作成
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<% if @chart_data.any? %>
+<script>
+function initializeGanttChart() {
+  // DOM要素の存在確認
+  const dateContainer = document.getElementById('timeline-dates');
+  if (!dateContainer) {
+    console.log('Gantt chart elements not found, retrying...');
+    setTimeout(initializeGanttChart, 200);
+    return;
+  }
+  
+  const tasks = <%= raw @chart_data.to_json %>;
+  
+  // 最大1年分の期間を設定
+  const today = new Date();
+  let chartStart, chartEnd;
+  
+  if (tasks.length > 0) {
+    // タスクがある場合は、タスクの期間に基づいて設定
+    const startDates = tasks.map(task => new Date(task.start));
+    const endDates = tasks.map(task => new Date(task.end));
+    const earliestStart = new Date(Math.min(...startDates));
+    const latestEnd = new Date(Math.max(...endDates));
+    
+    // タスクの期間を計算
+    const taskSpan = (latestEnd - earliestStart) / (1000 * 60 * 60 * 24);
+    
+    if (taskSpan <= 365) {
+      // 1年以内の場合は、少し余白を追加してタスク期間を表示
+      chartStart = new Date(earliestStart);
+      chartStart.setDate(chartStart.getDate() - 7); // 1週間の余白
+      chartEnd = new Date(latestEnd);
+      chartEnd.setDate(chartEnd.getDate() + 7); // 1週間の余白
+    } else {
+      // 1年を超える場合は、最も早いタスクから1年間表示
+      chartStart = new Date(earliestStart);
+      chartStart.setDate(chartStart.getDate() - 7);
+      chartEnd = new Date(chartStart);
+      chartEnd.setDate(chartEnd.getDate() + 365); // 1年間
+    }
+  } else {
+    // タスクがない場合は、今年の1月1日から12月31日まで表示
+    chartStart = new Date(today.getFullYear(), 0, 1); // 今年の1月1日
+    chartEnd = new Date(today.getFullYear(), 11, 31); // 今年の12月31日
+  }
+  
+  // タイムライン全体の日数
+  const totalDays = Math.ceil((chartEnd - chartStart) / (1000 * 60 * 60 * 24));
+  
+  // コンテナの最小幅を設定（期間に応じて日幅を調整）
+  const isMobile = window.innerWidth <= 768;
+  let dayWidth;
+  
+  if (totalDays > 300) {
+    // 10ヶ月以上の場合は幅を狭く
+    dayWidth = isMobile ? 20 : 25;
+  } else if (totalDays > 180) {
+    // 6ヶ月以上の場合は中間の幅
+    dayWidth = isMobile ? 30 : 35;
+  } else {
+    // 6ヶ月以内の場合は通常の幅
+    dayWidth = isMobile ? 40 : 50;
+  }
+  
+  const minWidth = Math.max(isMobile ? 400 : 800, totalDays * dayWidth);
+  
+  console.log(`Chart setup: totalDays=${totalDays}, dayWidth=${dayWidth}, minWidth=${minWidth}`);
+  console.log(`Chart period: ${chartStart.toISOString().slice(0,10)} to ${chartEnd.toISOString().slice(0,10)}`);
+  
+  document.querySelectorAll('.timeline-dates, .timeline-track').forEach(el => {
+    el.style.minWidth = minWidth + 'px';
+    el.style.width = minWidth + 'px';
+    console.log(`Set element width to ${minWidth}px for`, el.className);
+  });
+  
+  // 日付ヘッダーを生成
+  generateDateHeaders(chartStart, totalDays, dayWidth);
+  
+  // タスクバーを配置
+  positionTaskBars(tasks, chartStart, totalDays, dayWidth);
+  
+  // タスクバークリックイベント
+  document.querySelectorAll('.task-bar').forEach(bar => {
+    bar.addEventListener('click', function() {
+      const taskId = this.dataset.taskId;
+      window.location.href = `/tasks/${taskId}`;
+    });
+  });
+  
+  // スクロール同期の設定
+  setupScrollSync();
+  
+  console.log('Gantt chart initialized successfully');
+}
+
+// Turbo対応: ページロード時とTurbo遷移時の両方で実行
+document.addEventListener('DOMContentLoaded', function() {
+  // 要素が完全に読み込まれるまで少し待つ
+  setTimeout(initializeGanttChart, 100);
+});
+
+document.addEventListener('turbo:load', function() {
+  // Turbo遷移後の初期化
+  setTimeout(initializeGanttChart, 100);
+});
+
+document.addEventListener('turbo:render', function() {
+  // Turbo render後の初期化
+  setTimeout(initializeGanttChart, 50);
+});
+
+function setupScrollSync() {
+  const timelineContainer = document.querySelector('.gantt-timeline');
+  const headerContainer = document.querySelector('.timeline-dates-container');
+  const taskNamesColumn = document.querySelector('.task-names-column');
+  
+  if (!timelineContainer || !headerContainer || !taskNamesColumn) return;
+  
+  let isScrolling = false;
+  
+  // メインコンテナの横スクロールでヘッダーを同期
+  timelineContainer.addEventListener('scroll', function() {
+    if (isScrolling) return;
+    
+    const scrollLeft = this.scrollLeft;
+    const scrollTop = this.scrollTop;
+    
+    // ヘッダーの横スクロール位置を同期
+    isScrolling = true;
+    headerContainer.scrollLeft = scrollLeft;
+    // タスク名列の縦スクロール位置を同期
+    taskNamesColumn.scrollTop = scrollTop;
+    setTimeout(() => { isScrolling = false; }, 10);
+    
+    console.log(`Scroll sync: scrollLeft=${scrollLeft}px, scrollTop=${scrollTop}px`);
+  });
+  
+  // ヘッダーをスクロールした時もメインコンテナを同期
+  headerContainer.addEventListener('scroll', function() {
+    if (isScrolling) return;
+    
+    const scrollLeft = this.scrollLeft;
+    
+    isScrolling = true;
+    timelineContainer.scrollLeft = scrollLeft;
+    setTimeout(() => { isScrolling = false; }, 10);
+  });
+  
+  // タスク名列をスクロールした時もメインコンテナを同期
+  taskNamesColumn.addEventListener('scroll', function() {
+    if (isScrolling) return;
+    
+    const scrollTop = this.scrollTop;
+    
+    isScrolling = true;
+    timelineContainer.scrollTop = scrollTop;
+    setTimeout(() => { isScrolling = false; }, 10);
+  });
+}
+
+function generateDateHeaders(startDate, totalDays, dayWidth) {
+  const container = document.getElementById('timeline-dates');
+  container.innerHTML = ''; // 既存の要素をクリア
+  
+  const today = new Date();
+  const todayString = today.toDateString();
+  
+  for (let i = 0; i < totalDays; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+    
+    const dateElement = document.createElement('div');
+    dateElement.className = 'date-column';
+    dateElement.style.flex = `0 0 ${dayWidth}px`;
+    dateElement.style.minWidth = `${dayWidth}px`;
+    
+    // 長期間の場合は月/日、短期間の場合は月/日表示
+    if (totalDays > 180) {
+      // 6ヶ月以上の場合は、1日と15日のみ表示
+      if (date.getDate() === 1) {
+        dateElement.textContent = `${date.getMonth() + 1}/1`;
+        dateElement.classList.add('month-start');
+      } else if (date.getDate() === 15) {
+        dateElement.textContent = `${date.getDate()}`;
+      } else {
+        dateElement.textContent = '';
+      }
+    } else {
+      // 6ヶ月以内の場合は通常の月/日表示
+      dateElement.textContent = `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+    
+    // 本日をハイライト
+    if (date.toDateString() === todayString) {
+      dateElement.classList.add('today');
+    }
+    
+    // 週末をハイライト
+    if (date.getDay() === 0 || date.getDay() === 6) {
+      dateElement.classList.add('weekend');
+    }
+    
+    // 月の最初の日をハイライト
+    if (date.getDate() === 1) {
+      dateElement.classList.add('month-start');
+    }
+    
+    container.appendChild(dateElement);
+  }
+}
+
+function positionTaskBars(tasks, chartStart, totalDays, dayWidth) {
+  const today = new Date();
+  const todayString = today.toDateString();
+  
+  // 各タスク行にタイムライングリッドを追加
+  document.querySelectorAll('.timeline-track').forEach((track, index) => {
+    // 既存のグリッドを削除
+    track.querySelectorAll('.timeline-grid').forEach(grid => grid.remove());
+    
+    // タイムライングリッドを生成
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'timeline-grid';
+    gridContainer.style.position = 'absolute';
+    gridContainer.style.top = '0';
+    gridContainer.style.left = '0';
+    gridContainer.style.width = '100%';
+    gridContainer.style.height = '100%';
+    gridContainer.style.display = 'flex';
+    gridContainer.style.zIndex = '1';
+    
+    for (let i = 0; i < totalDays; i++) {
+      const date = new Date(chartStart);
+      date.setDate(date.getDate() + i);
+      
+      const dayColumn = document.createElement('div');
+      dayColumn.className = 'day-column';
+      dayColumn.style.flex = `0 0 ${dayWidth}px`;
+      dayColumn.style.minWidth = `${dayWidth}px`;
+      dayColumn.style.height = '100%';
+      dayColumn.style.border = '1px solid #e2e8f0';
+      
+      // 本日をハイライト
+      if (date.toDateString() === todayString) {
+        dayColumn.classList.add('day-today');
+        dayColumn.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+        dayColumn.style.borderRight = '2px solid #3b82f6';
+      }
+      
+      // 週末をハイライト
+      if (date.getDay() === 0 || date.getDay() === 6) {
+        dayColumn.classList.add('day-weekend');
+        if (!dayColumn.classList.contains('day-today')) {
+          dayColumn.style.backgroundColor = 'rgba(156, 163, 175, 0.08)';
+        }
+      }
+      
+      gridContainer.appendChild(dayColumn);
+    }
+    
+    track.insertBefore(gridContainer, track.firstChild);
+  });
+  
+  // タスクバーの配置
+  tasks.forEach(task => {
+    const taskBar = document.querySelector(`[data-task-id="${task.id}"]`);
+    if (!taskBar) return;
+    
+    const startDate = new Date(task.start);
+    const endDate = new Date(task.end);
+    
+    // タスクの開始位置（日数）- 期限日を含む正確な計算
+    const startDay = Math.floor((startDate - chartStart) / (1000 * 60 * 60 * 24));
+    const endDay = Math.floor((endDate - chartStart) / (1000 * 60 * 60 * 24));
+    const duration = Math.max(1, endDay - startDay + 1); // 最低1日、期限日も含める
+    
+    // 固定幅での位置計算
+    const left = startDay * dayWidth;
+    const width = duration * dayWidth;
+    
+    taskBar.style.left = `${left}px`;
+    taskBar.style.width = `${width}px`;
+    taskBar.style.position = 'absolute';
+    taskBar.style.zIndex = '5';
+    
+    // デバッグ用ログ
+    console.log(`Task ${task.id}: startDay=${startDay}, duration=${duration}, left=${left}px, width=${width}px`);
+  });
+}
+</script>
+
+<style>
+.gantt-chart {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-header {
+  display: flex;
+  border-bottom: 2px solid #e2e8f0;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.timeline-dates-container {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.gantt-content {
+  display: flex;
+  flex: 1;
+  max-height: 600px;
+}
+
+.task-names-column {
+  width: 250px;
+  background: white;
+  border-right: 2px solid #e2e8f0;
+  overflow-y: auto;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.gantt-timeline {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.task-name-header {
+  width: 250px;
+  padding: 15px;
+  font-weight: 600;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.timeline-dates {
+  display: flex;
+  flex: none;
+  position: relative;
+  transition: transform 0.1s ease;
+}
+
+.date-column {
+  flex: 0 0 50px;
+  min-width: 25px;
+  padding: 15px 2px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.date-column.today {
+  background: rgba(255, 193, 7, 0.3);
+  border-right: 2px solid #ffc107;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+.date-column.today::after {
+  content: '今日';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  font-weight: 600;
+  color: #fff;
+  background: #ffc107;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.date-column.weekend {
+  background: rgba(156, 163, 175, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.date-column.weekend.today {
+  background: rgba(255, 193, 7, 0.4);
+}
+
+.date-column.month-start {
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  border-left: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.timeline-body {
+  max-height: 600px;
+}
+
+.task-name-row {
+  border-bottom: 1px solid #e2e8f0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.task-name-row:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.task-name {
+  padding: 15px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.task-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 30px;
+}
+
+.task-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.task-title a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.timeline-row {
+  border-bottom: 1px solid #e2e8f0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.timeline-row:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.task-meta {
+  flex-shrink: 0;
+}
+
+.timeline-track {
+  flex: none;
+  position: relative;
+  height: 60px;
+  min-width: 800px;
+  overflow: visible;
+  border: none;
+  background: transparent;
+}
+
+.task-bar {
+  position: absolute;
+  top: 15px;
+  height: 30px;
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.task-bar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.task-bar.priority-high {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.task-bar.priority-medium {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+}
+
+.task-bar.priority-low {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.task-progress {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: width 0.3s ease;
+}
+
+.task-label {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 30px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .task-name-header,
+  .task-name {
+    width: 150px;
+  }
+  
+  .timeline-dates,
+  .timeline-track {
+    min-width: 400px;
+  }
+  
+  .date-column {
+    flex: 0 0 40px;
+    min-width: 40px;
+    padding: 10px 2px;
+    font-size: 10px;
+  }
+  
+  .task-label {
+    font-size: 10px;
+    left: 5px;
+    right: 5px;
+  }
+  
+  .task-bar {
+    height: 25px;
+  }
+}
+</style>
+<% end %>

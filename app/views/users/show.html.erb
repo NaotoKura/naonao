@@ -1,0 +1,177 @@
+<div class="main user-show">
+  <div class="container">
+    <div class="user">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="home-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#home"
+            type="button"
+            role="tab"
+            aria-controls="home"
+            aria-selected="true"
+          >
+            基本情報
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="profile-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#profile"
+            type="button"
+            role="tab"
+            aria-controls="profile"
+            aria-selected="false"
+          >
+            詳細情報
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="home"
+          role="tabpanel"
+          aria-labelledby="home-tab"
+        >
+          <fieldset class="shadow-lg p-3 mb-5 bg-body rounded">
+            <div class="row justify-content-end" style="text-align: left;">
+              <div class="col-4 p-2">
+                名前：<%= @user.name %>
+              </div>
+              <div class="col-4 p-2">
+                コード：<%= @user.code %>
+              </div>
+            </div>
+            <div class="row justify-content-center">
+              <div class="col-4">
+                <img src="<%= "/user_images/#{@user.image_name}" %>">
+              </div>
+              <div class="col-4 p-1 pt-3">
+                <div class="p-1" style="text-align: left;">
+                  メールアドレス：<%= @user.email %><br>
+                </div>
+                <div class="p-1 pt-4" style="text-align: left;">
+                <%= @user.year.present? && @user.month.present? ? "生年月日： #{@user.year} 年 #{@user.month} 月" : "生年月日：未設定"%>
+                </div>
+              </div>
+              <div class="col-4 p-1 pt-3" style="text-align: left;">
+                <div class="p-1" style="text-align: left;">
+                  年齢：<%= @user.age %><%= @user.age.present? ? '歳' : '未設定' %>
+                </div>
+                <div class="p-1 pt-4" style="text-align: left;">
+                  性別：<%= Constants::GENDERS[@user.gender.to_s] || "未設定" %>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-end pt-3 mb-2">
+              <div class="col-4 p-2" style="text-align: left;">
+                住所：<%= @user.prefecture&.name.presence || "未設定" %>
+              </div>
+              <div class="col-4 p-2">
+                <% if @user.id == @current_user.id %>
+                  <%= link_to("編集", "/users/#{@user.id}/edit") %>
+                <% end %>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="profile"
+          role="tabpanel"
+          aria-labelledby="profile-tab"
+        >
+          <fieldset class="shadow-lg p-3 mb-2 bg-body rounded">
+            <div class="row justify-content-around">
+              <div class="col-6 float-left">
+                <div class="col">
+                  <div class="posts-show-item text-start">
+                    <label class="form-label">プロフィール</label>
+                    <div class="posts-show-item text-break">
+                      <%= simple_format(@user.user_detail.profile) %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="col pb-2 float-start">
+                  サービス利用開始日：<%= @user.created_at.year %>年<%= @user.created_at.month %>月に登録
+                </div>
+                <br>
+                <br>
+                <div class="col float-start">
+                  URL：<%= @user.user_detail.url %>
+                </div>
+                <br>
+                <br>
+                <div class="col float-start">
+                  投稿数：<%= @user.posts.length %>
+                </div>
+                <br>
+                <br>
+                <div class="row justify-content-between">
+                  <div class="col-4 float-start text-start">
+                    いいね数：<%= @like_datas[:total_likes] %>
+                  </div>
+                  <div class="col-8">
+                    いいねされた数：<%= @like_datas[:total_liked] %>
+                  </div>
+                </div>
+                <br>
+                <div class="row justify-content-between">
+                  <div class="col-5 text-start">
+                    今日のいいね数：<%= @like_datas[:total_liked_today] %>
+                  </div>
+                  <div class="col-7">
+                    一週間以内のいいね数：<%= @like_datas[:total_liked_week] %>
+                  </div>
+                </div>
+                <br>
+                <div class="col text-start">
+                  最もいいねしているユーザ：<%= @like_datas[:most_likes_count_user].presence || "なし" %>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+
+    <ul class="user-tabs">
+      <li class="active"><%= link_to("投稿", "/users/#{@user.id}", class: "navbar-brand link-dark") %></li>
+      <li><%= link_to("いいね!", "/users/#{@user.id}/likes", class: "navbar-brand link-dark") %></li>
+    </ul>
+
+    <% @posts.each do |post| %>
+      <a href="<%= "/posts/#{post.id}"%>" class="link-secondary" style="display: block; color: black;">
+        <div class="posts-index-item">
+          <div class="post-left">
+            <img src="<%= "/user_images/#{post.image_name}" %>">
+          </div>
+          <div class="post-right">
+            <div class="post-user-name lead fw-bold">
+              <%= post.user_name %>
+            </div>
+            <div class="post-index-time">
+              <%= post.created_at.strftime('%Y年%m月%d日 %H時%M分') %>
+            </div>
+            <div class="lead" style="overflow-wrap: break-word;">
+              <%= post.content.truncate(50, separator: "。") %>
+            </div>
+          </div>
+        </div>
+      </a>
+    <% end %><br>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <%= paginate @posts %>
+      </ul>
+    </nav>
+  </div>
+</div>
+<%= javascript_include_tag "bootstrap.js" %>

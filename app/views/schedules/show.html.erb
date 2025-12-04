@@ -1,0 +1,54 @@
+<% content_for(:title, "スケジュール詳細") %>
+<div class="main posts-show">
+  <div class="container">
+    <div class="posts-show-item">
+      <div class="post-user-name">
+        <img src="<%= "/user_images/#{@schedule.user.image_name}" %>">
+        <%= link_to(@schedule.user.name, "/users/#{@schedule.user.id}") %>
+      </div>
+      
+      <h2>スケジュール詳細</h2>
+      <div class="schedule-details">
+        <p><strong>予定:</strong> <%= @schedule.content %></p>
+        <p><strong>日付:</strong> <%= @schedule.date %></p>
+        <p><strong>開始時刻:</strong> <%= @schedule.start_time.strftime("%H:%M") %></p>
+        <p><strong>終了時刻:</strong> <%= @schedule.end_time.strftime("%H:%M") %></p>
+        <p><strong>カテゴリ:</strong> <%= @schedule.category %></p>
+        <% if @schedule.deadline.present? %>
+          <p><strong>期限:</strong> <%= @schedule.deadline.strftime("%Y年%m月%d日 %H:%M") %></p>
+        <% end %>
+      </div>
+      
+      <div class="memo-section">
+        <h3>関連メモ</h3>
+        <% if @schedule.memo && @schedule.memo.memo.present? %>
+          <div class="memo-preview">
+            <p><%= truncate(@schedule.memo.memo, length: 100) %></p>
+            <div class="memo-actions">
+              <%= link_to("メモを見る", memo_path(@schedule.memo), {class: "btn btn-primary"}) %>
+              <%= link_to("メモを編集", edit_memo_path(@schedule.memo), {class: "btn edit-btn"}) %>
+            </div>
+          </div>
+        <% else %>
+          <div class="memo-empty">
+            <p>このスケジュールにはまだメモがありません。</p>
+            <%= link_to("メモを作成", new_memo_path(schedule_id: @schedule.id), {class: "btn btn-primary"}) %>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="post-time">
+        作成日時: <%= @schedule.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+        <% if @schedule.updated_at != @schedule.created_at %>
+          <br>更新日時: <%= @schedule.updated_at.strftime("%Y年%m月%d日 %H:%M") %>
+        <% end %>
+      </div>
+      
+      <div class="post-menus">
+        <%= link_to("編集", "/schedules/#{@schedule.id}/edit", {class: "btn edit-btn"}) %>
+        <%= link_to("削除", "/schedules/#{@schedule.id}/destroy", {class: "btn destroy-btn", confirm: "本当に削除しますか？"}) %>
+        <%= link_to("スケジュール一覧に戻る", schedules_index_path, {class: "btn btn-default"}) %>
+      </div>
+    </div>
+  </div>
+</div>

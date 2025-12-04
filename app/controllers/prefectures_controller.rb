@@ -1,0 +1,3 @@
+class PrefecturesController < ApplicationController
+
+end

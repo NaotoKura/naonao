@@ -1,0 +1,32 @@
+<%= form_with(model: [@lane, @card], class: "mt-2") do |form| %>
+  <%# バリデーションエラーメッセージの表示 %>
+  <% if form.object.errors.any? %>
+    <div class="alert alert-danger p-2 small">
+      <% form.object.errors.full_messages.each do |message| %>
+        <div><%= message %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <div class="card-body p-2">
+      <div class="mb-2">
+        <%= form.text_field :title, class: "form-control form-control-sm", placeholder: "カードのタイトル", required: true %>
+      </div>
+      <div class="mb-2">
+        <%= form.label :priority, "優先度", class: "form-label small" %>
+        <%# `Card.priorities`はenumで定義したものを想定 %>
+        <%= form.select :priority, Card.priorities.keys.map { |k| [I18n.t("activerecord.attributes.card.priorities.#{k}"), k] }, {}, {class: "form-select form-select-sm"} %>
+      </div>
+      <div class="mb-2">
+        <%= form.label :due_date, "期日", class: "form-label small" %>
+        <%= form.date_field :due_date, class: "form-control form-control-sm" %>
+      </div>
+      <div class="d-flex justify-content-end mt-2">
+        <%= form.submit "作成", class: "btn btn-primary btn-sm" %>
+        <%# キャンセル時はボードのページを再読み込みしてフォームを閉じる %>
+        <%= link_to "キャンセル", board_path, class: "btn btn-light btn-sm ms-1" %>
+      </div>
+    </div>
+  </div>
+<% end %>

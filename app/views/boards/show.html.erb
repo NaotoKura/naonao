@@ -1,0 +1,38 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'schedules', media: 'all', 'data-turbolinks-track': 'reload' %>
+<% end %>
+
+<div class="modern-schedule-page">
+  <div class="schedule-container">
+    <header class="schedule-header">
+      <div class="date-navigation">
+        <%# スケジュール画面のナビゲーションを模倣。カンバンボードには不要なので空にするか、タイトルのみにする %>
+        <h1 class="current-date">
+          <span class="date-text">カンバンボード</span>
+        </h1>
+      </div>
+      <%# 必要であればここに新規レーン追加ボタンなどを配置 %>
+    </header>
+
+    <main class="schedule-content">
+      <div class="d-flex align-items-start"> <%# d-flexで横並びを維持 %>
+        <% @lanes.each do |lane| %>
+          <div class="lane m-2 p-2 border rounded bg-light" style="width: 300px;">
+            <h5 class="p-2"><%= lane.name %></h5>
+
+            <!-- StimulusコントローラとSortable.jsのコンテナ -->
+            <div data-controller="drag" data-drag-lane-id-value="<%= lane.id %>" style="min-height: 200px;" id="lane_<%= lane.id %>_cards">
+              <% lane.cards.each do |card| %>
+                <%= render "card", card: card %>
+              <% end %>
+            </div>
+
+            <%= turbo_frame_tag "new_card_for_lane_#{lane.id}" do %>
+              <%= link_to "+ カードを追加", new_lane_card_path(lane), class: "btn btn-secondary btn-sm mt-2" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </main>
+  </div>
+</div>

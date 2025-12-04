@@ -1,0 +1,177 @@
+<div class="main users-index">
+  <div class="container">
+    <h1 class="users-heading">ユーザー一覧</h1>
+    <form id="pageForm">
+      <fieldset class="shadow-lg p-3 mb-5 bg-body rounded">
+        <legend>ユーザー検索</legend>
+        <div class="container px-2">
+          <div class="row row-cols-3 gx-5">
+            <div class="col">
+              <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">名前</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" value="<%= params[:name] %>" class="form-control form-control-sm" id="colFormLabelSm" placeholder="名前">
+              </div>
+            </div>
+            <div class="col p-3 d-flex">
+            <label for="down" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">年代</label>
+              <select class="form-select col-sm-4 form-select-sm" name="age_id" id="ages" value="<%= params[:age_id] %>">
+                <option value="" hidden>年代選択</option>
+                <% Constants::AGES.each do |key, val| %>
+                  <option value="<%= key %>" <%= "selected" if key.to_s == params[:age_id] %>><%= val[:display_name] %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col">
+            <label for="genderdown" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">性別</label><br>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="gender[]" value="<%= Constants::GENDER_MAN %>"
+                  <%= "checked" if params[:gender]&.include?(Constants::GENDER_MAN) %>>
+                <label class="form-check-label" for="inlineCheckbox1">男性</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" name="gender[]" value="<%= Constants::GENDER_WOMAN %>"
+                  <%= "checked" if params[:gender]&.include?(Constants::GENDER_WOMAN) %>>
+                <label class="form-check-label" for="inlineCheckbox2">女性</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" name="gender[]" value="<%= Constants::GENDER_UNSELECT %>"
+                  <%= "checked" if params[:gender]&.include?(Constants::GENDER_UNSELECT) %>>
+                <label class="form-check-label" for="inlineCheckbox3">未設定</label>
+              </div>
+            </div>
+            <div class="col">
+              <label for="colFormLabelSm" class="col-sm-3 fw-bolder col-form-label col-form-label-sm">メール</label>
+              <div class="col-sm-10">
+                <input type="text" name="email" value="<%= params[:email] %>" class="form-control form-control-sm" id="colFormLabelSm" placeholder="メール">
+              </div>
+            </div>
+            <div class="col p-3 d-flex">
+            <label for="downbrath" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">生年月日</label>
+              <select class="form-select col-3 form-select-sm me-3" id="birth2" name="year">
+                <option value="" hidden>年</option>
+                <option value="0" <%= "selected" if params[:year] == "0" %>>未設定</option>
+                <% Constants::YEARS.each do |years| %>
+                  <option value="<%= years %>"<%= "selected" if years.to_s == params[:year] %>><%= years %>年</option>
+                <% end %>
+              </select>
+              <select class="form-select col-3 form-select-sm" id="birth3" name="month">
+                <option value="" hidden>月</option>
+                <option value="0" <%= "selected" if params[:month] == "0" %>>未設定</option>
+                <% for month in 1..12 %>
+                  <option value="<%= month %>"<%= "selected" if month.to_s == params[:month] %>><%= month %>月</option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col">
+            <label for="genderdown" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">投稿</label><br>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox4" value="1" name="is_posts[]" <%= "checked" if params[:is_posts]&.include?("1") %>>
+                <label class="form-check-label" for="inlineCheckbox4">あり</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox5" value="0" name="is_posts[]" <%= "checked" if params[:is_posts]&.include?("0") %>>
+                <label class="form-check-label" for="inlineCheckbox5">なし</label>
+              </div>
+            </div>
+            <div class="col">
+              <label for="colFormLabelSm" class="col-sm-3 fw-bolder col-form-label col-form-label-sm">コード</label>
+              <div class="col-sm-10">
+                <input type="text" name="code" value="<%= params[:code] %>" class="form-control form-control-sm" id="colFormLabelSm" placeholder="コード">
+              </div>
+            </div>
+            <div class="col p-3 mb-5 d-flex">
+              <label for="down" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">住所</label>
+              <select class="form-select col-sm-4 form-select-sm" id="prefecture" name="prefecture_id">
+                <option value="" hidden>住所選択</option>
+                <option value="0" <%= "selected" if params[:prefecture_id] == "0" %>>未設定</option>
+                <% @prefectures.each do |prefecture| %>
+                  <option value="<%= prefecture.id %>" <%= "selected" if prefecture.id.to_s == params[:prefecture_id] %>><%= prefecture.name %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col">
+            <label for="genderdown" class="col-sm-2 col-form-label col-form-label-sm fw-bolder">利用期間</label><br>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-period" type="checkbox" id="inlineCheckbox6" value="1" name="period" <%= "checked" if params[:period] == "1" %>>
+                <label class="form-check-label" for="inlineCheckbox6" style="font-size: 15px;">1ヶ月未満</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-period" type="checkbox" id="inlineCheckbox7" value="2" name="period" <%= "checked" if params[:period] == "2" %>>
+                <label class="form-check-label" for="inlineCheckbox7" style="font-size: 15px;">半年未満</label>
+              </div>
+              <br>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-period" type="checkbox" id="inlineCheckbox8" value="3" name="period" <%= "checked" if params[:period] == "3" %>>
+                <label class="form-check-label" for="inlineCheckbox8" style="font-size: 15px;">1年未満</label>
+              </div>
+              <div class="form-check col-sm-3 form-check-inline">
+                <input class="form-check-input check-period" type="checkbox" id="inlineCheckbox9" value="4" name="period" <%= "checked" if params[:period] == "4" %>>
+                <label class="form-check-label" for="inlineCheckbox9" style="font-size: 15px;">それ以上</label>
+              </div>
+              <br>
+              <label for="genderdown" class="col-form-label-sm" style="color: red;">利用期間は複数選択できません</label>
+            </div>
+          </div>
+          <div class="row justify-content-end p-3">
+            <div class="col-4 text-center">
+              <input type="submit" class="btn btn-primary" style="color: white;" value="検索">
+            </div>
+            <div class="col-4 text-center">
+              <input class="clearForm btn btn-secondary" id="reset" type="button" value="クリア">
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div class="row justify-content-between mb-2">
+        <div class="col-2">
+          <select class="form-select col-sm-4 form-select-sm me-1 ml-5" style="width: 100px;" name="limit" value="" onchange="$('#pageForm').submit();">
+            <option value="10" <%= "selected" if params[:limit] == "10" %>>10</option>
+            <option value="30" <%= "selected" if params[:limit] == "30" %>>30</option>
+            <option value="50" <%= "selected" if params[:limit] == "50" %>>50</option>
+          </select>
+        </div>
+        <div class="col-2 d-flex align-items-end justify-content-end">
+          <%= @users.offset_value + @users.length %>/<%= @users.total_count %>件
+        </div>
+      </div>
+    </form>
+    <table class="shadow-lg table table-bordered table-striped table-hover">
+      <thead style="color: white; background-color: #3ecdc6;">
+        <tr>
+          <th scope="col" class="text-center">id</th>
+          <th scope="col" class="text-center"></th>
+          <th scope="col">名前</th>
+          <th scope="col">コード</th>
+          <th scope="col">メール</th>
+          <th scope="col">住所</th>
+          <th scope="col">年齢</th>
+          <th scope="col">性別</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr data-href="<%= "/users/#{user.id}"%>">
+            <th class="text-center"><%= user.id %></th>
+            <td class="text-center"><img style="max-width: 55px; border-radius: 50%;" src="<%= "/user_images/#{user.image_name}" %>"></td>
+            <td><%= user.name %></td>
+            <td><%= user.code %></td>
+            <td><%= user.email %></td>
+            <td>
+              <%= user&.prefecture_name.presence || "未設定" %>
+            </td>
+            <td><%= user.age.present? ? "#{user.age}歳" : "未設定" %></td>
+            <td>
+            <%= Constants::GENDERS[user.gender.to_s] || "未設定" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <%= paginate @users %>
+      </ul>
+    </nav>
+  </div>
+</div>
+<%= javascript_include_tag "users.js" %>

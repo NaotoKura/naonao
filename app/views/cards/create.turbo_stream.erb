@@ -1,0 +1,7 @@
+<%# 新しいカードをレーンの末尾に追加 %>
+<%= turbo_stream.append "lane_#{@lane.id}_cards", partial: "boards/card", locals: { card: @card } %>
+
+<%# 入力フォームを「+ カードを追加」リンクに戻す %>
+<%= turbo_stream.update "new_card_for_lane_#{@lane.id}" do %>
+  <%= link_to "+ カードを追加", new_lane_card_path(@lane), class: "btn btn-secondary btn-sm mt-2" %>
+<% end %>
