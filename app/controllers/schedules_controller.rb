@@ -60,18 +60,35 @@ class SchedulesController < ApplicationController
   end
 
   def update_by_date
-    params[:ids].each_with_index do |id, index|
-      schedule = Schedule.find_by(id: id)
-      next if schedule.nil?  # 存在しないIDはスキップ
-
-      schedule.update(
-          category: schedule_params[:category][index],
+    # 全ての行をループ処理（既存行と新規行の両方）
+    schedule_params[:category].each_with_index do |category, index|
+      # params[:ids]が存在し、かつ該当のindexにidがある場合は更新
+      if params[:ids] && params[:ids][index].present?
+        schedule = Schedule.find_by(id: params[:ids][index])
+        if schedule
+          schedule.update(
+            category: category,
+            start_time: schedule_params[:start_time][index],
+            end_time: schedule_params[:end_time][index],
+            content: schedule_params[:content][index],
+            deadline: schedule_params[:deadline][index],
+            date: schedule_params[:date][index],
+          )
+        end
+      else
+        # idがない場合は新規作成
+        @schedule = Schedule.create(
+          category: category,
           start_time: schedule_params[:start_time][index],
           end_time: schedule_params[:end_time][index],
           content: schedule_params[:content][index],
           deadline: schedule_params[:deadline][index],
           date: schedule_params[:date][index],
+          user_id: @current_user.id
         )
+        # メモも作成
+        Memo.create(schedule_id: @schedule.id)
+      end
     end
     flash[:notice] = "更新しました"
     redirect_to("/schedules/index")

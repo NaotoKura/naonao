@@ -116,14 +116,21 @@
 </div>
 <%= javascript_include_tag "schedules.js" %>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  // Turbo Railsに対応するため、turbo:loadとDOMContentLoadedの両方に対応
+  function initializeScheduleForm() {
     // 追加ボタンの要素を取得
     const addRowButton = document.getElementById("addRowButton");
+    if (!addRowButton) return; // ボタンがない場合は終了
+
     // 新しい要素を追加するためのコンテナ
     const scheduleContainer = document.getElementById("scheduleContainer");
 
+    // 既存のイベントリスナーを削除してから追加（重複防止）
+    const newAddRowButton = addRowButton.cloneNode(true);
+    addRowButton.parentNode.replaceChild(newAddRowButton, addRowButton);
+
     // 追加ボタンをクリックしたときのイベントリスナー
-    addRowButton.addEventListener("click", function() {
+    newAddRowButton.addEventListener("click", function() {
       const scheduleElement = document.querySelectorAll('.time-schedule');
       const count = scheduleElement.length + 1;
 
@@ -172,6 +179,7 @@
             </button>
           </div>
           <input type="hidden" value="<%= @today %>" name="schedule[date][]">
+          <input type="hidden" name="ids[]" value="">
         </div>
       `;
       // 新しい行をコンテナに追加
@@ -183,7 +191,11 @@
     window.removeScheduleRow = function(button) {
       button.closest('.schedule-row').remove();
     }
-  });
+  }
+
+  // 初回ロードとTurbo Railsのページ遷移の両方に対応
+  document.addEventListener("DOMContentLoaded", initializeScheduleForm);
+  document.addEventListener("turbo:load", initializeScheduleForm);
 </script>
 
 

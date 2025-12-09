@@ -166,14 +166,22 @@
 </div>
 <%= javascript_include_tag "schedules.js" %>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  // Turbo Railsに対応するため、関数化
+  function initializeScheduleNewForm() {
     // 追加ボタンの要素を取得
     const addRowButton = document.getElementById("addRowButton");
-    // 新しい要素を追加するためのコンテナ
-    const scheduleContainer = document.getElementById("scheduleContainer");
+    if (!addRowButton) return; // ボタンがない場合は終了
+
+    // 新しい要素を追加するためのコンテナ（.schedule-rowsを取得）
+    const scheduleRowsContainer = document.querySelector(".schedule-rows");
+    if (!scheduleRowsContainer) return;
+
+    // 既存のイベントリスナーを削除してから追加（重複防止）
+    const newAddRowButton = addRowButton.cloneNode(true);
+    addRowButton.parentNode.replaceChild(newAddRowButton, addRowButton);
 
     // 追加ボタンをクリックしたときのイベントリスナー
-    addRowButton.addEventListener("click", function() {
+    newAddRowButton.addEventListener("click", function() {
       const scheduleElement = document.querySelectorAll('.time-schedule');
       const count = scheduleElement.length + 1;
 
@@ -225,10 +233,10 @@
         </div>
       `;
       // 新しい行をコンテナに追加
-      scheduleContainer.insertAdjacentHTML('beforeend', newRow);
+      scheduleRowsContainer.insertAdjacentHTML('beforeend', newRow);
 
       // 新しく追加されたボタンにクリックイベントを追加
-      const removeButton = scheduleContainer.querySelector(`[data-num="${count}"]`);
+      const removeButton = scheduleRowsContainer.querySelector(`[data-num="${count}"]`);
       removeButton.addEventListener("click", function() {
         scheduleItemDelete(count);
       });
@@ -241,6 +249,10 @@
         element.remove();
       }
     }
-  });
+  }
+
+  // 初回ロードとTurbo Railsのページ遷移の両方に対応
+  document.addEventListener("DOMContentLoaded", initializeScheduleNewForm);
+  document.addEventListener("turbo:load", initializeScheduleNewForm);
 </script>
 

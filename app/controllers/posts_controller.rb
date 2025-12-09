@@ -131,13 +131,13 @@ class PostsController < ApplicationController
 
   private
 
-  def extract_words(text)
-    nm = Natto::MeCab.new
-    freq = Hash.new(0)
-    nm.parse(text) do |n|
-      next if n.surface.empty? || n.feature.include?("記号")
-      freq[n.surface] += 1
-    end
-    freq.map { |word, count| { text: word, size: count * 10 } }
-  end
+  # def extract_words(text)
+  #   nm = Natto::MeCab.new
+  #   freq = Hash.new(0)
+  #   nm.parse(text) do |n|
+  #     next if n.surface.empty? || n.feature.include?("記号")
+  #     freq[n.surface] += 1
+  #   end
+  #   freq.map { |word, count| { text: word, size: count * 10 } }
+  # end
 end
