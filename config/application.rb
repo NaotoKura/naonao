@@ -16,7 +16,7 @@ module SampleApp
     config.active_record.default_timezone = :local
 
     if Rails.env.development? || Rails.env.test?
-      nm = Natto::MeCab.new
+      require 'natto'
     end
 
     # Configuration for the application, engines, and railties goes here.
