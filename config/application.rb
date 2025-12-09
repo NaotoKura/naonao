@@ -15,6 +15,10 @@ module SampleApp
     config.time_zone = "Tokyo"
     config.active_record.default_timezone = :local
 
+    if Rails.env.development? || Rails.env.test?
+      nm = Natto::MeCab.new
+    end
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
