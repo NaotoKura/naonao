@@ -1,0 +1,63 @@
+# Git
+.git
+.gitignore
+
+# ログとテンポラリファイル
+log/*
+tmp/*
+*.log
+*.pid
+
+# データベース
+*.sqlite3
+*.sqlite3-journal
+
+# 環境変数
+.env
+.env.*
+
+# ドキュメント
+README.md
+doc/
+.yardoc
+
+# テスト
+coverage/
+spec/tmp/
+test/tmp/
+
+# IDE
+.idea/
+.vscode/
+.history/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Node modules (volumeでマウントするため除外)
+node_modules/
+yarn-debug.log*
+yarn-error.log*
+
+# Public assets (コンパイルするため除外)
+public/assets
+public/packs
+public/packs-test
+
+# Storage
+storage/*
+tmp/storage/*
+
+# Vendor cache
+vendor/bundle
+.bundle
+
+# Docker関連
+Dockerfile
+docker-compose.yml
+.dockerignore
