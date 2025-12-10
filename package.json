@@ -5,6 +5,7 @@
     "webpack-dev-server": "2.11.2"
   },
   "dependencies": {
+    "@rails/webpacker": "^5.4.4",
     "sortablejs": "^1.15.2",
     "stimulus-sortable": "^4.1.1"
   }
