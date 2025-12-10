@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # PostgreSQLデータベース
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sample_app_development
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Railsアプリケーション
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+      - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: sample_app_development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: webpacker
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  # Webpacker Dev Server
+  webpacker:
+    build: .
+    command: ./bin/webpack-dev-server
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+      - node_modules:/app/node_modules
+    ports:
+      - "3035:3035"
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+      RAILS_ENV: development
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  bundle_cache:
+  node_modules:

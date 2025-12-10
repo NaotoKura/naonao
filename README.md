@@ -35,12 +35,90 @@
 
 ## 必要な環境
 
+### ローカル環境
 - Ruby 3.1.2
 - PostgreSQL
 - Node.js & Yarn
 - MeCab（ワードクラウド機能を使用する場合）
 
+### Docker環境（推奨）
+- Docker
+- Docker Compose
+
 ## セットアップ
+
+### Docker環境での起動（推奨）
+
+Dockerを使用すると、環境構築が簡単で、依存関係の問題を避けられます。
+
+#### 1. リポジトリのクローン
+
+```bash
+git clone <repository-url>
+cd sample_app
+```
+
+#### 2. Dockerコンテナのビルドと起動
+
+```bash
+# コンテナのビルドと起動
+docker-compose up --build
+
+# バックグラウンドで起動する場合
+docker-compose up -d --build
+```
+
+#### 3. アプリケーションへのアクセス
+
+ブラウザで以下のURLにアクセスしてください：
+- アプリケーション: http://localhost:3000
+- Webpacker Dev Server: http://localhost:3035
+
+#### Docker環境での主なコマンド
+
+```bash
+# コンテナの起動
+docker-compose up
+
+# コンテナの停止
+docker-compose down
+
+# コンテナの再起動
+docker-compose restart
+
+# ログの確認
+docker-compose logs -f web
+
+# Railsコンソール
+docker-compose exec web rails console
+
+# マイグレーション
+docker-compose exec web rails db:migrate
+
+# テスト実行
+docker-compose exec web rails test
+
+# コンテナ内でコマンドを実行
+docker-compose exec web bash
+```
+
+#### トラブルシューティング
+
+```bash
+# 全てのコンテナとボリュームを削除してクリーンアップ
+docker-compose down -v
+
+# イメージを再ビルド
+docker-compose build --no-cache
+
+# Gemやyarn依存関係の再インストール
+docker-compose run --rm web bundle install
+docker-compose run --rm web yarn install
+```
+
+---
+
+### ローカル環境でのセットアップ
 
 ### 1. リポジトリのクローン
 
