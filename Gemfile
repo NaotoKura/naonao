@@ -32,7 +32,7 @@ gem "jbuilder"
 
 gem 'kaminari'
 
-gem 'webpacker', '~> 3.0'
+# gem 'webpacker', '~> 3.0'
 
 gem 'psych', '~> 3.1'
 # Use Redis adapter to run Action Cable in production
