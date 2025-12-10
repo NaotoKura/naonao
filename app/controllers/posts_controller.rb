@@ -1,6 +1,4 @@
 class PostsController < ApplicationController
-  require 'natto'
-
   before_action :authenticate_user
   before_action :ensure_current_user, {only: [:edit, :edit_fixed, :update, :destroy]}
   before_action :post_info, {only: [:show, :edit, :update, :destroy]}
@@ -128,16 +126,4 @@ class PostsController < ApplicationController
     words = extract_words(post_content)
     render json: words
   end
-
-  private
-
-  # def extract_words(text)
-  #   nm = Natto::MeCab.new
-  #   freq = Hash.new(0)
-  #   nm.parse(text) do |n|
-  #     next if n.surface.empty? || n.feature.include?("記号")
-  #     freq[n.surface] += 1
-  #   end
-  #   freq.map { |word, count| { text: word, size: count * 10 } }
-  # end
 end

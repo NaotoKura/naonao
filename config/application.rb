@@ -15,13 +15,13 @@ module SampleApp
     config.time_zone = "Tokyo"
     config.active_record.default_timezone = :local
 
-    if Rails.env.development? || Rails.env.test?
-      begin
-        require 'natto'
-      rescue LoadError
-        puts "natto が読み込めませんでした（development/test）。"
-      end
-    end
+    # if Rails.env.development? || Rails.env.test?
+    #   begin
+    #     require 'natto'
+    #   rescue LoadError
+    #     puts "natto が読み込めませんでした（development/test）。"
+    #   end
+    # end
 
     # Configuration for the application, engines, and railties goes here.
     #
