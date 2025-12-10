@@ -1,52 +1,52 @@
 # ベースイメージ
 FROM ruby:3.1.2
 
-# 必要なパッケージのインストール
+# 必要なパッケージをインストール
 RUN apt-get update -qq && \
     apt-get install -y \
     build-essential \
     libpq-dev \
     nodejs \
     npm \
-    postgresql-client \
-    curl \
-    git \
     mecab \
     libmecab-dev \
-    mecab-ipadic-utf8 && \
+    mecab-ipadic-utf8 \
+    git \
+    curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Yarnのインストール
+# Yarn をインストール
 RUN npm install -g yarn
 
-# 作業ディレクトリの設定
+# 作業ディレクトリ
 WORKDIR /app
 
-# Gemfile と Gemfile.lock をコピー
+# Bundler 用ファイルのみ先にコピー
 COPY Gemfile Gemfile.lock ./
 
-# Bundlerのインストールとgem依存関係のインストール
+# bundler インストール & gem install
 RUN gem install bundler && \
-    bundle install
+    bundle install --without development test
 
-# package.json と yarn.lock をコピー
+# Node パッケージ関連をコピー
 COPY package.json yarn.lock ./
 
-# Node.js依存関係のインストール
-RUN yarn install
+# yarn install
+RUN yarn install --production=false
 
-# アプリケーションコードをコピー
+# アプリケーション全体をコピー
 COPY . .
 
-# エントリーポイントスクリプトをコピーして実行権限を付与
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
+# assets:precompile（超重要）
+RUN RAILS_ENV=production bundle exec rake assets:precompile
 
-# エントリーポイントの設定
-ENTRYPOINT ["entrypoint.sh"]
+# 環境変数
+ENV RAILS_ENV=production
+ENV RACK_ENV=production
+ENV PORT=8080
 
-# ポート3000を公開
-EXPOSE 3000
+# ポート公開
+EXPOSE 8080
 
-# Railsサーバーを起動
-CMD ["rails", "server", "-b", "0.0.0.0"]
+# puma を起動
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
