@@ -48,5 +48,7 @@ ENV PORT=8080
 # ポート公開
 EXPOSE 8080
 
+RUN echo "RAILS_ENV=${RAILS_ENV}, RACK_ENV=${RACK_ENV}"
+
 # puma を起動
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
