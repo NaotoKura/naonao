@@ -108,3 +108,5 @@ cache/
 # --------------------------
 # Spring (Rails preloader)
 /spring/*.pid
+
+.history/
