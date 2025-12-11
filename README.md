@@ -229,6 +229,67 @@ whenever --clear-crontab
 
 ## デプロイ
 
+### Railwayへのデプロイ
+
+このアプリケーションはRailwayでDockerコンテナとしてデプロイできます。
+
+#### 1. Railwayプロジェクトの作成
+
+1. [Railway](https://railway.app/)にログイン
+2. 「New Project」をクリック
+3. GitHubリポジトリを接続
+
+#### 2. PostgreSQLデータベースの追加
+
+1. プロジェクトダッシュボードで「New」→「Database」→「Add PostgreSQL」
+2. データベースが自動的に作成され、`DATABASE_URL`環境変数が設定されます
+
+#### 3. 環境変数の設定
+
+Railwayのプロジェクト設定で以下の環境変数を設定：
+
+```
+RAILS_ENV=production
+RACK_ENV=production
+SECRET_KEY_BASE=<rails secret で生成>
+RAILS_MASTER_KEY=<config/master.keyの内容>
+PORT=8080
+```
+
+`SECRET_KEY_BASE`の生成方法：
+```bash
+rails secret
+```
+
+#### 4. デプロイ
+
+GitHubにpushすると自動的にデプロイされます。
+
+```bash
+git add .
+git commit -m "Configure for Railway deployment"
+git push origin main
+```
+
+#### 5. データベースのマイグレーション
+
+初回デプロイ後、Railwayのコンソールで：
+
+```bash
+rails db:migrate
+```
+
+#### 注意事項
+
+- `Dockerfile`は本番環境用、`Dockerfile.dev`は開発環境用です
+- Railwayは自動的に`Dockerfile`を検出してビルドします
+- ポート8080がデフォルトで使用されます
+- アセットは自動的にプリコンパイルされます
+
+---
+
+### その他の環境へのデプロイ
+
 本番環境へのデプロイ手順：
 
 1. 環境変数の設定（本番用DATABASE_URL、SECRET_KEY_BASE等）
