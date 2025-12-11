@@ -43,19 +43,20 @@ class UsersController < ApplicationController
     )
     @user.password_confirmation = params[:password_confirmation]
 
-    # バリデーションで弾かれなかったとき
-    unless @user.valid?
-      return render("users/new")
-    end
     # 新規登録時、ユーザー詳細情報を空で登録する。
     @user.build_user_detail
 
     if @user.save
       session[:user_id] = @user.id
       flash[:notice] = "ユーザー登録が完了しました"
-      return redirect_to("/users/#{@user.id}")
+      redirect_to("/users/#{@user.id}")
+    else
+      # Turbo対応：renderではなくredirect_toを使用
+      # エラーメッセージと入力値をflashに保存
+      flash[:alert] = @user.errors.full_messages.join(", ")
+      flash[:user_params] = { name: params[:name], email: params[:email] }
+      redirect_to("/signup")
     end
-    render("users/new")
   end
 
   def edit
@@ -85,33 +86,18 @@ class UsersController < ApplicationController
     @user = User.find_by(email: params[:email])
     if @user.blank?
       @user = undiscard
-      # if @user.present?
-      #   flash[:notice] = "アカウントを復元し、ログインしました"
-      # end
       flash[:notice] = "アカウントを復元し、ログインしました" if @user.present?
     end
-    # if @user && @user.authenticate(params[:password])
-    #   session[:user_id] = @user.id
-    #   if flash[:notice].blank?
-    #     flash[:notice] = "ログインしました"
-    #   end
-    #   return redirect_to("/posts/index")
-    # else
-    #   @error_message = "メールアドレスまたはパスワードが間違っています"
-    #   @email = params[:email]
-    #   @password = params[:password]
-    #   render("users/login_form")
-    # end
+
     if @user && @user.authenticate(params[:password])
       session[:user_id] = @user.id
       flash[:notice] = "ログインしました" if flash[:notice].blank?
-      return redirect_to("/posts/index")
+      redirect_to("/posts/index")
+    else
+      # Turbo対応：renderではなくredirect_toを使用
+      flash[:alert] = "メールアドレスまたはパスワードが間違っています"
+      redirect_to("/login")
     end
-
-    @error_message = "メールアドレスまたはパスワードが間違っています"
-    # @email = params[:email]
-    # @password = params[:password]
-    render("users/login_form")
   end
 
   def logout
