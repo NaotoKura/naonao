@@ -4,18 +4,18 @@ FROM ruby:3.1.2-slim
 # 必要なパッケージのインストール
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    nodejs \
-    npm \
-    postgresql-client \
-    curl \
-    git && \
+        build-essential \
+        libpq-dev \
+        postgresql-client \
+        curl \
+        git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Yarnのインストール
-RUN npm install -g yarn --silent
+# Node.js 18 & Yarn をインストール
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g yarn
 
 # 作業ディレクトリの設定
 WORKDIR /app
