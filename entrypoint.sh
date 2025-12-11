@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# pidsディレクトリを作成
+mkdir -p tmp/pids
+
 # Rails server.pidが残っている場合は削除
 if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
