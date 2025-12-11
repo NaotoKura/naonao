@@ -3,9 +3,9 @@
     <div class="form-heading">ログイン</div>
     <div class="form users-form">
       <div class="form-body">
-        <% if @error_message %>
+        <% if flash[:alert] %>
           <div class="form-error">
-            <%= @error_message %>
+            <%= flash[:alert] %>
           </div>
         <% end %>
 

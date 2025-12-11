@@ -43,6 +43,10 @@ RUN yarn install --production --frozen-lockfile && \
 # アプリケーションコードをコピー
 COPY . .
 
+# entrypoint.shに実行権限を付与
+RUN chmod +x entrypoint.sh
+
+
 # アセットのプリコンパイル（本番環境用）
 RUN SECRET_KEY_BASE=dummy RAILS_ENV=production bundle exec rails assets:precompile && \
     rm -rf node_modules tmp/cache
@@ -67,6 +71,9 @@ EXPOSE 8080
 RUN useradd -m -u 1000 rails && \
     chown -R rails:rails /app
 USER rails
+
+# entrypoint.sh を ENTRYPOINT に設定
+ENTRYPOINT ["./entrypoint.sh"]
 
 # Railsサーバーを起動（Puma）
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
