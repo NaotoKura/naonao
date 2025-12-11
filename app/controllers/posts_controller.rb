@@ -43,9 +43,6 @@ class PostsController < ApplicationController
   # end
 
   def create
-    p "=============================================="
-    pp params
-    p "=============================================="
     @post = Post.new(
       work_content: params[:work_content],
       content: params[:content],
@@ -59,9 +56,6 @@ class PostsController < ApplicationController
     # else
     #   render("posts/new")
     # end
-    p "=============================================="
-    pp @post.save
-    p "=============================================="
     if @post.save
       if params[:type].blank?
         flash[:notice] = "投稿を作成しました"
@@ -105,9 +99,6 @@ class PostsController < ApplicationController
 
   def destroy
     # @post = Post.find params[:id]
-    p "=============================================="
-    pp @post
-    p "=============================================="
     @post.destroy
     flash[:notice] = "投稿を削除しました"
     redirect_to("/posts/index")
@@ -119,11 +110,5 @@ class PostsController < ApplicationController
       flash[:notice] = "権限がありません"
       redirect_to("/posts/index")
     end
-  end
-
-  def word_cloud
-    post_content = Post.pluck(:content).join("\n")
-    words = extract_words(post_content)
-    render json: words
   end
 end
