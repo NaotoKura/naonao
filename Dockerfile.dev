@@ -25,30 +25,28 @@ WORKDIR /app
 # Gemfile と Gemfile.lock をコピー
 COPY Gemfile Gemfile.lock ./
 
-# Bundlerのインストールとgem依存関係のインストール（本番用）
-# development, testグループを除外
+# Bundlerのインストールとgem依存関係のインストール（開発環境用）
 RUN gem install bundler && \
-    bundle config set --local without 'development test' && \
-    bundle install --jobs 4 --retry 3
+    bundle install
 
 # package.json と yarn.lock をコピー
 COPY package.json yarn.lock ./
 
 # Node.js依存関係のインストール
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # アプリケーションコードをコピー
 COPY . .
 
-# アセットのプリコンパイル（本番環境用）
-RUN SECRET_KEY_BASE=dummy RAILS_ENV=production bundle exec rails assets:precompile
+# エントリーポイントスクリプトをコピーして実行権限を付与
+COPY entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
 
-# 環境変数の設定
-ENV RAILS_ENV=production
-ENV RACK_ENV=production
+# エントリーポイントの設定
+ENTRYPOINT ["entrypoint.sh"]
 
-# ポート8080を公開（Railwayのデフォルト）
-EXPOSE 8080
+# ポート3000を公開
+EXPOSE 3000
 
-# Railsサーバーを起動（Puma）
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+# Railsサーバーを起動
+CMD ["rails", "server", "-b", "0.0.0.0"]

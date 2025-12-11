@@ -31,6 +31,8 @@ test:
 
 production:
   <<: *default
-  database: sample_app
-  username: sumple
-  password: password
+  database: <%= ENV.fetch("DATABASE_NAME") { "sample_app_production" } %>
+  username: <%= ENV.fetch("DATABASE_USERNAME") { "postgres" } %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
+  host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
+  url: <%= ENV['DATABASE_URL'] %>
