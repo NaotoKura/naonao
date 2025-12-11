@@ -1,6 +1,7 @@
 # Git
 .git
 .gitignore
+.gitattributes
 
 # ログとテンポラリファイル
 log/*
@@ -11,6 +12,7 @@ tmp/*
 # データベース
 *.sqlite3
 *.sqlite3-journal
+db/*.sqlite3
 
 # 環境変数
 .env
@@ -23,6 +25,8 @@ doc/
 
 # テスト
 coverage/
+spec/
+test/
 spec/tmp/
 test/tmp/
 
@@ -39,12 +43,13 @@ test/tmp/
 .LSOverride
 ._*
 
-# Node modules (volumeでマウントするため除外)
+# Node modules
 node_modules/
 yarn-debug.log*
 yarn-error.log*
+npm-debug.log*
 
-# Public assets (コンパイルするため除外)
+# Public assets (コンパイル時に生成されるため除外)
 public/assets
 public/packs
 public/packs-test
@@ -58,6 +63,12 @@ vendor/bundle
 .bundle
 
 # Docker関連
-Dockerfile
+Dockerfile.dev
 docker-compose.yml
 .dockerignore
+
+# その他の不要ファイル
+*.md
+.babelrc
+.postcssrc.yml
+bin/webpack-dev-server
