@@ -39,6 +39,9 @@ RUN yarn install
 # アプリケーションコードをコピー
 COPY . .
 
+# assets を事前コンパイル
+RUN bundle exec rails assets:precompile
+
 RUN mkdir -p tmp/pids
 
 # エントリーポイントスクリプトをコピーして実行権限を付与
