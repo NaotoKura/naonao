@@ -1,17 +1,9 @@
 #!/bin/sh
 set -e
 
-# pidディレクトリ
 mkdir -p tmp/pids
 rm -f tmp/pids/server.pid
 
-# DATABASE_URL があれば DB を準備
-if [ -n "$DATABASE_URL" ]; then
-  echo "DATABASE_URL detected. Preparing database..."
-  bundle exec rails db:prepare
-else
-  echo "DATABASE_URL not set. Skipping database setup"
-fi
+echo "Starting Rails server on port ${PORT:-8080}"
 
-# Puma 起動（必ず exec）
-exec bundle exec puma -C config/puma.rb
+exec bundle exec rails server -b 0.0.0.0 -p ${PORT:-8080} -e production
