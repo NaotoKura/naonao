@@ -46,12 +46,12 @@ RUN mkdir -p tmp/pids
 
 RUN bundle exec rails db:prepare
 
-# エントリーポイントスクリプトをコピーして実行権限を付与
+# entrypoint を app 配下に置く
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# エントリーポイントの設定
-CMD ["./entrypoint.sh"]
+# ENTRYPOINT は使わない
+CMD ["sh", "/app/entrypoint.sh"]
 
 # ポート3000を公開
 # EXPOSE 3000
