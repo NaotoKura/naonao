@@ -44,6 +44,8 @@ RUN bundle exec rails assets:precompile
 
 RUN mkdir -p tmp/pids
 
+RUN bundle exec rails db:prepare
+
 # エントリーポイントスクリプトをコピーして実行権限を付与
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
