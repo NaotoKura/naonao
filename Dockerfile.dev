@@ -39,6 +39,8 @@ RUN yarn install
 # アプリケーションコードをコピー
 COPY . .
 
+RUN mkdir -p tmp/pids
+
 # エントリーポイントスクリプトをコピーして実行権限を付与
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
