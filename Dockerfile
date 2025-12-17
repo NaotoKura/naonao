@@ -73,8 +73,6 @@ RUN useradd -m -u 1000 rails && \
     chown -R rails:rails /app
 USER rails
 
-RUN bundle exec rails db:prepare
-
 # entrypoint.sh を ENTRYPOINT に設定
 ENTRYPOINT ["./entrypoint.sh"]
 
